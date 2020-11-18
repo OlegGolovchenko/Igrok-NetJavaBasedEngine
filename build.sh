@@ -8,6 +8,3 @@ echo "done."
 echo "linking native library"
 gcc -shared -o ./lib/libIgnWindow.so ./obj/NativeWindow.o -lX11 -lGL -lGLU
 echo "done."
-echo "installing native library"
-sudo cp ./lib/libIgnWindow.so /usr/lib/libIgnWindow.so
-echo "done."

@@ -3,7 +3,9 @@
         {
             "name": "Linux",
             "includePath": [
-                "${workspaceFolder}/**"
+                "${workspaceFolder}/**",
+                "/usr/lib/jvm/adoptopenjdk-15-hotspot-amd64/include/",
+                "/usr/lib/jvm/adoptopenjdk-15-hotspot-amd64/include/linux/"
             ],
             "defines": [],
             "compilerPath": "/usr/bin/gcc",
