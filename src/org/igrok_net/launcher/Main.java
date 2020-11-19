@@ -8,5 +8,7 @@ public class Main {
     public static void main(String[] args) {
         System.out.println("Igrok-Net Game Engine v" + version);
         IGNFreeGlut.glutInit(args);
+        IGNFreeGlut.glutInitWindowPosition(0, 0);
+        IGNFreeGlut.glutInitWindowSize(800, 600);
     }
 }

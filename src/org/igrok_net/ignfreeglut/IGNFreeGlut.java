@@ -9,10 +9,21 @@ public class IGNFreeGlut {
         System.load(lib.getAbsolutePath());
     }
 
-    private static native void glutInit(String[]argcp,int argv);
+    private static native void glutInitNative(String[] argcp);
 
-    public static void glutInit(String[]args){
-        glutInit(args, args.length);
+    private static native void glutInitWindowPositionNative(int x, int y);
+
+    private static native void glutInitWindowSizeNative(int width, int height);
+
+    public static void glutInit(String[] args) {
+        glutInitNative(args);
     }
 
+    public static void glutInitWindowPosition(int x, int y) {
+        glutInitWindowPositionNative(x, y);
+    }
+
+    public static void glutInitWindowSize(int width, int height) {
+        glutInitWindowSizeNative(width, height);
+    }
 }
