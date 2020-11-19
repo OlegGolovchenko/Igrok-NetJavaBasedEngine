@@ -9,11 +9,27 @@ extern "C" {
 #endif
 /*
  * Class:     org_igrok_net_ignfreeglut_IGNFreeGlut
- * Method:    glutInit
- * Signature: ([Ljava/lang/String;I)V
+ * Method:    glutInitNative
+ * Signature: ([Ljava/lang/String;)V
  */
-JNIEXPORT void JNICALL Java_org_igrok_1net_ignfreeglut_IGNFreeGlut_glutInit
-  (JNIEnv *, jclass, jobjectArray, jint);
+JNIEXPORT void JNICALL Java_org_igrok_1net_ignfreeglut_IGNFreeGlut_glutInitNative
+  (JNIEnv *, jclass, jobjectArray);
+
+/*
+ * Class:     org_igrok_net_ignfreeglut_IGNFreeGlut
+ * Method:    glutInitWindowPositionNative
+ * Signature: (II)V
+ */
+JNIEXPORT void JNICALL Java_org_igrok_1net_ignfreeglut_IGNFreeGlut_glutInitWindowPositionNative
+  (JNIEnv *, jclass, jint, jint);
+
+/*
+ * Class:     org_igrok_net_ignfreeglut_IGNFreeGlut
+ * Method:    glutInitWindowSizeNative
+ * Signature: (II)V
+ */
+JNIEXPORT void JNICALL Java_org_igrok_1net_ignfreeglut_IGNFreeGlut_glutInitWindowSizeNative
+  (JNIEnv *, jclass, jint, jint);
 
 #ifdef __cplusplus
 }
