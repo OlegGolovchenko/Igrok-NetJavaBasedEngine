@@ -1,2 +1,2 @@
 # Igrok-NetJavaBasedEngine
-Java based game engine that uses freeglut as window managing api
+Java based game engine that uses XLib as window managing api
