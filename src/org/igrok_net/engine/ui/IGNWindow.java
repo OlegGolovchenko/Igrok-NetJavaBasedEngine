@@ -17,6 +17,8 @@ public class IGNWindow {
 
     private native void DestroyWindow(long wndPtr);
 
+    private native void MainLoop(long wndPtr);
+
     public IGNWindow() {
         this("Igrok-NET Engine");
     }
@@ -30,7 +32,11 @@ public class IGNWindow {
     }
 
     public IGNWindow(String title, int x, int y, int width,int height) {
-        wndPtr = CreateNativeWindow(title, x, y, width,height);
+        this.wndPtr = CreateNativeWindow(title, x, y, width,height);
+    }
+
+    public void Run(){
+        this.MainLoop(this.wndPtr);
     }
 
     public void Dispose(){
