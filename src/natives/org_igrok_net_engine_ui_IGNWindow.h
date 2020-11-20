@@ -23,6 +23,14 @@ JNIEXPORT jlong JNICALL Java_org_igrok_1net_engine_ui_IGNWindow_CreateNativeWind
 JNIEXPORT void JNICALL Java_org_igrok_1net_engine_ui_IGNWindow_DestroyWindow
   (JNIEnv *, jobject, jlong);
 
+/*
+ * Class:     org_igrok_net_engine_ui_IGNWindow
+ * Method:    MainLoop
+ * Signature: (J)V
+ */
+JNIEXPORT void JNICALL Java_org_igrok_1net_engine_ui_IGNWindow_MainLoop
+  (JNIEnv *, jobject, jlong);
+
 #ifdef __cplusplus
 }
 #endif
