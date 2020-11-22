@@ -15,11 +15,34 @@ public class IGNWindow {
      */
     private long wndPtr;
 
+    private long initialTime = System.currentTimeMillis();
+
+    private long lastUpdate;
+
+    private int frameCounter;
+
     private native long CreateNativeWindow(String title, int x, int y, int width, int height);
 
     private native void DestroyWindow(long wndPtr);
 
     private native void MainLoop(long wndPtr);
+
+    private int IsUpdateNeeded(){
+        var currentTime = System.currentTimeMillis();
+        var delta = currentTime - this.lastUpdate;
+        var deltaInitial = currentTime - initialTime;
+        if(delta > 16){
+            this.lastUpdate = currentTime;
+            this.frameCounter ++;
+            return 1;
+        }
+        if(deltaInitial > 1000){
+            System.out.println("Rendered: "+this.frameCounter+" frames last second.");
+            this.frameCounter = 0;
+            this.initialTime = currentTime;
+        }
+        return 0;
+    }
 
     private void SetKeyPress(long key, long mod){
         OnKeyPress(this, KeyPress.Create(key, mod));
@@ -71,6 +94,7 @@ public class IGNWindow {
 
     public IGNWindow(String title, int x, int y, int width,int height) {
         this.wndPtr = CreateNativeWindow(title, x, y, width,height);
+        this.lastUpdate = System.currentTimeMillis();
     }
 
     public void Run(){

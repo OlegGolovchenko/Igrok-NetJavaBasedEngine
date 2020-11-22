@@ -20,5 +20,6 @@ public:
     bool running;
     IGNWindow(const char *title, int x, int y, int width, int height);
     bool IsRunning();
+    static int IsSelectedEvent(Display * dipslay,XEvent * event, XPointer args);
     ~IGNWindow();
 };

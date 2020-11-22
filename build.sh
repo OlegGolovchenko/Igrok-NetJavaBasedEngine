@@ -1,7 +1,7 @@
 #!/bin/bash
 echo "compiling java files and generating native headers"
 rm -r ./bin/*
-javac -d ./bin -cp ./bin -h ./src/natives -verbose ./src/org/igrok_net/engine/ui/events/*.java ./src/org/igrok_net/engine/ui/*.java ./src/org/igrok_net/launcher/*.java
+javac -d ./bin -cp ./bin -h ./src/natives ./src/org/igrok_net/engine/ui/events/*.java ./src/org/igrok_net/engine/ui/*.java ./src/org/igrok_net/launcher/*.java
 echo "done."
 echo "compiling native library"
 rm ./obj/IGNUI.o

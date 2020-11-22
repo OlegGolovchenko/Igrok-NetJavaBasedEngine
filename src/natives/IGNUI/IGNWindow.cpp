@@ -25,43 +25,59 @@ JNIEXPORT void JNICALL Java_org_igrok_1net_engine_ui_IGNWindow_MainLoop(JNIEnv *
     jmethodID onKeyPress = env->GetMethodID(jcl, "SetKeyPress", "(JJ)V");
     jmethodID onKeyRelease = env->GetMethodID(jcl, "SetKeyRelease","(JJ)V");
     jmethodID onMousePress = env->GetMethodID(jcl, "SetMousePress","(J)V");
+    jmethodID isUpdateNeeded = env->GetMethodID(jcl, "IsUpdateNeeded","()I");
     IGNWindow *window = (IGNWindow *)wndPtr;
     if (window != NULL)
     {
+        XWindowAttributes *gwa = new XWindowAttributes();
         while (window->IsRunning())
         {
-            XEvent *xev = new XEvent();
-            XNextEvent(window->display, xev);
-
-            if (xev->type == Expose)
+            jint result = env->CallIntMethod(jobj, isUpdateNeeded);
+            if (result)
             {
-                XWindowAttributes *gwa = new XWindowAttributes();
-                XGetWindowAttributes(window->display, window->window, gwa);
                 glViewport(0, 0, gwa->width, gwa->height);
                 glXSwapBuffers(window->display, window->window);
             }
-            else if (xev->type == KeyPress)
+            XEvent *xev = new XEvent();
+            if(XCheckIfEvent(window->display, xev, IGNWindow::IsSelectedEvent, NULL))
             {
-                env->CallVoidMethod(jobj, onKeyPress, xev->xkey.keycode, xev->xkey.keycode);
-            }
-            else if (xev->type == KeyRelease)
-            {
-                env->CallVoidMethod(jobj, onKeyRelease, xev->xkey.keycode, xev->xkey.keycode);
-            }
-            else if (xev->type == ButtonPressMask)
-            {
-                env->CallVoidMethod(jobj,onMousePress,xev->xbutton.button);
-            }
-            else if (xev->type == ClientMessage)
-            {
-                long int wmDeleteMessage = XInternAtom(window->display, "WM_DELETE_WINDOW", False);
-                if (xev->xclient.data.l[0] == wmDeleteMessage)
+
+                if (xev->type == Expose)
                 {
-                    window->running = false;
+                    XGetWindowAttributes(window->display, window->window, gwa);
+                }
+                else if (xev->type == KeyPress)
+                {
+                    env->CallVoidMethod(jobj, onKeyPress, xev->xkey.keycode, xev->xkey.keycode);
+                }
+                else if (xev->type == KeyRelease)
+                {
+                    env->CallVoidMethod(jobj, onKeyRelease, xev->xkey.keycode, xev->xkey.keycode);
+                }
+                else if (xev->type == ButtonPress)
+                {
+                    env->CallVoidMethod(jobj, onMousePress, xev->xbutton.button);
+                }
+                else if (xev->type == ClientMessage)
+                {
+                    long int wmDeleteMessage = XInternAtom(window->display, "WM_DELETE_WINDOW", False);
+                    if (xev->xclient.data.l[0] == wmDeleteMessage)
+                    {
+                        window->running = false;
+                    }
                 }
             }
         }
     }
+}
+
+int IGNWindow::IsSelectedEvent(Display *display, XEvent *event, XPointer args)
+{
+    return event->type == Expose || 
+           event->type == KeyPress || 
+           event->type == KeyRelease || 
+           event->type == ButtonPress || 
+           event->type == ClientMessage;
 }
 
 IGNWindow::IGNWindow(const char *title, int x, int y, int width, int height)
