@@ -9,5 +9,5 @@ gcc -I /usr/lib/jvm/adoptopenjdk-15-hotspot-amd64/include/ -I /usr/lib/jvm/adopt
 echo "done."
 echo "linking native library"
 rm ./lib/libIGNUI.so;
-gcc -shared -o ./lib/libIGNUI.so ./obj/IGNUI.o -lX11 -lGL -lGLU
+gcc -shared -o ./lib/libIGNUI.so ./obj/IGNUI.o -lX11 -lGL -lGLU -lglut
 echo "done."

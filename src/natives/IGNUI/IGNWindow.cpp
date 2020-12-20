@@ -1,7 +1,9 @@
 #include "IGNWindow.h"
 #include "../org_igrok_net_engine_ui_IGNWindow.h"
+#include <string>
+#include <GL/freeglut.h>
 
-JNIEXPORT jlong JNICALL Java_org_igrok_1net_engine_ui_IGNWindow_CreateNativeWindow(JNIEnv *env, jobject jobj, jstring title, jint x, jint y, jint width, jint height)
+JNIEXPORT jlong JNICALL Java_org_igrok_1net_engine_ui_IGNWindow_createNativeWindow(JNIEnv *env, jobject jobj, jstring title, jint x, jint y, jint width, jint height)
 {
     const char *jtitle = env->GetStringUTFChars(title, NULL);
     jlong result = (jlong) new IGNWindow(jtitle, x, y, width, height);
@@ -10,7 +12,7 @@ JNIEXPORT jlong JNICALL Java_org_igrok_1net_engine_ui_IGNWindow_CreateNativeWind
     return 0;
 }
 
-JNIEXPORT void JNICALL Java_org_igrok_1net_engine_ui_IGNWindow_DestroyWindow(JNIEnv *env, jobject jobj, jlong wndPtr)
+JNIEXPORT void JNICALL Java_org_igrok_1net_engine_ui_IGNWindow_destroyWindow(JNIEnv *env, jobject jobj, jlong wndPtr)
 {
     IGNWindow *window = (IGNWindow *)wndPtr;
     if (window != NULL)
@@ -19,13 +21,14 @@ JNIEXPORT void JNICALL Java_org_igrok_1net_engine_ui_IGNWindow_DestroyWindow(JNI
     }
 }
 
-JNIEXPORT void JNICALL Java_org_igrok_1net_engine_ui_IGNWindow_MainLoop(JNIEnv *env, jobject jobj, jlong wndPtr)
+JNIEXPORT void JNICALL Java_org_igrok_1net_engine_ui_IGNWindow_mainLoop(JNIEnv *env, jobject jobj, jlong wndPtr)
 {
     jclass jcl = env->GetObjectClass(jobj);
-    jmethodID onKeyPress = env->GetMethodID(jcl, "SetKeyPress", "(JJ)V");
-    jmethodID onKeyRelease = env->GetMethodID(jcl, "SetKeyRelease","(JJ)V");
-    jmethodID onMousePress = env->GetMethodID(jcl, "SetMousePress","(J)V");
-    jmethodID isUpdateNeeded = env->GetMethodID(jcl, "IsUpdateNeeded","()I");
+    jmethodID onKeyPress = env->GetMethodID(jcl, "setKeyPress", "(JJ)V");
+    jmethodID onKeyRelease = env->GetMethodID(jcl, "setKeyRelease","(JJ)V");
+    jmethodID onMousePress = env->GetMethodID(jcl, "setMousePress","(J)V");
+    jmethodID isUpdateNeeded = env->GetMethodID(jcl, "isUpdateNeeded","()I");
+    jmethodID getFps = env->GetMethodID(jcl,"getFrameCounter","()I");
     IGNWindow *window = (IGNWindow *)wndPtr;
     if (window != NULL)
     {
@@ -33,11 +36,6 @@ JNIEXPORT void JNICALL Java_org_igrok_1net_engine_ui_IGNWindow_MainLoop(JNIEnv *
         while (window->IsRunning())
         {
             jint result = env->CallIntMethod(jobj, isUpdateNeeded);
-            if (result)
-            {
-                glViewport(0, 0, gwa->width, gwa->height);
-                glXSwapBuffers(window->display, window->window);
-            }
             XEvent *xev = new XEvent();
             if(XCheckIfEvent(window->display, xev, IGNWindow::IsSelectedEvent, NULL))
             {
@@ -66,9 +64,54 @@ JNIEXPORT void JNICALL Java_org_igrok_1net_engine_ui_IGNWindow_MainLoop(JNIEnv *
                         window->running = false;
                     }
                 }
+            }            
+            if (result)
+            {
+                glViewport(0, 0, gwa->width, gwa->height);
+                glClearColor(0, 0, 0, 0);
+                glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+                glLoadIdentity();
+                glMatrixMode(GL_PROJECTION);
+                glLoadIdentity();
+                glOrtho(0, gwa->width, gwa->height, 0, -1, 1);
+                glMatrixMode(GL_MODELVIEW);
+                glLoadIdentity();
+                jint fps = env->CallIntMethod(jobj, getFps);
+                std::string  fpsStr = std::to_string(fps);
+                std::string fpsText = " fps";
+                const char * fpsString = (fpsStr+ fpsText).c_str();
+                const unsigned char *fpsToPrint = reinterpret_cast<const unsigned char*>(fpsString);
+                glRasterPos2i(10, 20);
+                glColor4f(0.0f, 0.0f, 1.0f, 1.0f);
+                glutBitmapString(GLUT_BITMAP_9_BY_15, fpsToPrint);
+                glLoadIdentity();
+                glMatrixMode(GL_PROJECTION);
+                glLoadIdentity();
+                gluPerspective(70, (gwa->width / (gwa->height * 1.0)), -1, 1);
+                glLoadIdentity();
+                glLoadIdentity();
+                glXSwapBuffers(window->display, window->window);
             }
         }
     }
+}
+
+JNIEXPORT void JNICALL Java_org_igrok_1net_engine_ui_IGNWindow_init(JNIEnv *env, jclass jcl, jobjectArray args){
+    jsize arraySize = env->GetArrayLength(args);
+    char *argsvp[arraySize];
+    for (int i = 0; i < arraySize; i++)
+    {
+        jstring element = (jstring)env->GetObjectArrayElement(args, i);
+        const char *argsChars = env->GetStringUTFChars(element, 0);
+        jsize argSize = env->GetStringUTFLength(element);
+        char result[argSize];
+        strcpy(result, argsChars);
+        argsvp[i] = result;
+        env->ReleaseStringUTFChars(element, argsChars);
+        element = NULL;
+    }
+    int argscp = sizeof(argsvp);
+    glutInit(&argscp, argsvp);
 }
 
 int IGNWindow::IsSelectedEvent(Display *display, XEvent *event, XPointer args)

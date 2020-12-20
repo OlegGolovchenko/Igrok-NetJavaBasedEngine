@@ -7,8 +7,9 @@ public class Main {
 
     public static void main(String[] args) {
         System.out.println("Igrok-Net Game Engine v" + version);
+        IGNWindow.init(args);
         IGNWindow window = new IGNWindow();
-        window.Run();
-        window.Dispose();
+        window.run();
+        window.dispose();
     }
 }

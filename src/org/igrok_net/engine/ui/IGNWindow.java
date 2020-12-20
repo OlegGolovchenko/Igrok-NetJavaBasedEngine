@@ -21,13 +21,17 @@ public class IGNWindow {
 
     private int frameCounter;
 
-    private native long CreateNativeWindow(String title, int x, int y, int width, int height);
+    private int currentFps;
 
-    private native void DestroyWindow(long wndPtr);
+    private native long createNativeWindow(String title, int x, int y, int width, int height);
 
-    private native void MainLoop(long wndPtr);
+    private native void destroyWindow(long wndPtr);
 
-    private int IsUpdateNeeded(){
+    private native void mainLoop(long wndPtr);
+
+    public static native void init(String[]args);
+
+    private int isUpdateNeeded(){
         var currentTime = System.currentTimeMillis();
         var delta = currentTime - this.lastUpdate;
         var deltaInitial = currentTime - initialTime;
@@ -37,26 +41,30 @@ public class IGNWindow {
             return 1;
         }
         if(deltaInitial > 1000){
-            System.out.println("Rendered: "+this.frameCounter+" frames last second.");
+            this.currentFps = frameCounter;
             this.frameCounter = 0;
             this.initialTime = currentTime;
         }
         return 0;
     }
 
-    private void SetKeyPress(long key, long mod){
-        OnKeyPress(this, KeyPress.Create(key, mod));
+    private int getFrameCounter(){
+        return this.currentFps;
     }
 
-    private void SetKeyRelease(long key, long mod){
-        OnKeyRelease(this, KeyPress.Create(key, mod));
+    private void setKeyPress(long key, long mod){
+        onKeyPress(this, KeyPress.Create(key, mod));
     }
 
-    private void SetMousePress(long button){
-        OnMousePress(this, button);
+    private void setKeyRelease(long key, long mod){
+        onKeyRelease(this, KeyPress.Create(key, mod));
     }
 
-    private void OnMousePress(IGNWindow ignWindow, long button) {
+    private void setMousePress(long button){
+        onMousePress(this, button);
+    }
+
+    private void onMousePress(IGNWindow ignWindow, long button) {
         String btnDescription = "None";
         if(button == MousePress.LMB){
             btnDescription = "Left";
@@ -72,11 +80,11 @@ public class IGNWindow {
         System.out.println("mouse button pressed: " + btnDescription);
     }
 
-    protected void OnKeyPress(Object sender, KeyPress eventArgs) {
+    protected void onKeyPress(Object sender, KeyPress eventArgs) {
         System.out.println("key pressed, code: " + eventArgs.GetKey() + " modifier: "+eventArgs.GetModifier());
     }
 
-    protected void OnKeyRelease(Object sender, KeyPress eventArgs){
+    protected void onKeyRelease(Object sender, KeyPress eventArgs){
         System.out.println("key released, code: " + eventArgs.GetKey() + " modifier: "+eventArgs.GetModifier());
     }
 
@@ -93,17 +101,17 @@ public class IGNWindow {
     }
 
     public IGNWindow(String title, int x, int y, int width,int height) {
-        this.wndPtr = CreateNativeWindow(title, x, y, width,height);
+        this.wndPtr = createNativeWindow(title, x, y, width,height);
         this.lastUpdate = System.currentTimeMillis();
     }
 
-    public void Run(){
-        this.MainLoop(this.wndPtr);
+    public void run(){
+        this.mainLoop(this.wndPtr);
     }
 
-    public void Dispose(){
+    public void dispose(){
         if(this.wndPtr > 0){
-            DestroyWindow(this.wndPtr);
+            destroyWindow(this.wndPtr);
         }
         this.wndPtr = 0;
     }
