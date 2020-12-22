@@ -32,48 +32,48 @@ JNIEXPORT void JNICALL Java_org_igrok_1net_engine_ui_IGNWindow_mainLoop(JNIEnv *
     IGNWindow *window = (IGNWindow *)wndPtr;
     if (window != NULL)
     {
-        XWindowAttributes *gwa = new XWindowAttributes();
+        XWindowAttributes gwa;
         while (window->IsRunning())
         {
             jint result = env->CallIntMethod(jobj, isUpdateNeeded);
-            XEvent *xev = new XEvent();
-            if(XCheckIfEvent(window->display, xev, IGNWindow::IsSelectedEvent, NULL))
+            XEvent xev;
+            if(XCheckIfEvent(window->display, &xev, IGNWindow::IsSelectedEvent, NULL))
             {
 
-                if (xev->type == Expose)
+                if (xev.type == Expose)
                 {
-                    XGetWindowAttributes(window->display, window->window, gwa);
+                    XGetWindowAttributes(window->display, window->window, &gwa);
                 }
-                else if (xev->type == KeyPress)
+                else if (xev.type == KeyPress)
                 {
-                    env->CallVoidMethod(jobj, onKeyPress, xev->xkey.keycode, xev->xkey.keycode);
+                    env->CallVoidMethod(jobj, onKeyPress, xev.xkey.keycode, xev.xkey.keycode);
                 }
-                else if (xev->type == KeyRelease)
+                else if (xev.type == KeyRelease)
                 {
-                    env->CallVoidMethod(jobj, onKeyRelease, xev->xkey.keycode, xev->xkey.keycode);
+                    env->CallVoidMethod(jobj, onKeyRelease, xev.xkey.keycode, xev.xkey.keycode);
                 }
-                else if (xev->type == ButtonPress)
+                else if (xev.type == ButtonPress)
                 {
-                    env->CallVoidMethod(jobj, onMousePress, xev->xbutton.button);
+                    env->CallVoidMethod(jobj, onMousePress, xev.xbutton.button);
                 }
-                else if (xev->type == ClientMessage)
+                else if (xev.type == ClientMessage)
                 {
                     long int wmDeleteMessage = XInternAtom(window->display, "WM_DELETE_WINDOW", False);
-                    if (xev->xclient.data.l[0] == wmDeleteMessage)
+                    if (xev.xclient.data.l[0] == wmDeleteMessage)
                     {
                         window->running = false;
                     }
                 }
-            }            
+            }
             if (result)
             {
-                glViewport(0, 0, gwa->width, gwa->height);
-                glClearColor(0, 0, 0, 0);
+                glViewport(0, 0, gwa.width, gwa.height);
+                glClearColor(1, 1, 1, 1);
                 glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
                 glLoadIdentity();
                 glMatrixMode(GL_PROJECTION);
                 glLoadIdentity();
-                glOrtho(0, gwa->width, gwa->height, 0, -1, 1);
+                glOrtho(0, gwa.width, gwa.height, 0, -1, 1);
                 glMatrixMode(GL_MODELVIEW);
                 glLoadIdentity();
                 jint fps = env->CallIntMethod(jobj, getFps);
@@ -87,7 +87,7 @@ JNIEXPORT void JNICALL Java_org_igrok_1net_engine_ui_IGNWindow_mainLoop(JNIEnv *
                 glLoadIdentity();
                 glMatrixMode(GL_PROJECTION);
                 glLoadIdentity();
-                gluPerspective(70, (gwa->width / (gwa->height * 1.0)), -1, 1);
+                gluPerspective(70, (gwa.width / (gwa.height * 1.0)), -1, 1);
                 glLoadIdentity();
                 glLoadIdentity();
                 glXSwapBuffers(window->display, window->window);
