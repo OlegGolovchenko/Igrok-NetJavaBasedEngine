@@ -31,14 +31,6 @@ JNIEXPORT void JNICALL Java_org_igrok_1net_engine_ui_IGNWindow_destroyWindow
 JNIEXPORT void JNICALL Java_org_igrok_1net_engine_ui_IGNWindow_mainLoop
   (JNIEnv *, jobject, jlong);
 
-/*
- * Class:     org_igrok_net_engine_ui_IGNWindow
- * Method:    init
- * Signature: ([Ljava/lang/String;)V
- */
-JNIEXPORT void JNICALL Java_org_igrok_1net_engine_ui_IGNWindow_init
-  (JNIEnv *, jclass, jobjectArray);
-
 #ifdef __cplusplus
 }
 #endif

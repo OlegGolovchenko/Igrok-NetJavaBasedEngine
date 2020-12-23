@@ -1,5 +1,6 @@
 package org.igrok_net.launcher;
 
+import org.igrok_net.engine.IGNEngine;
 import org.igrok_net.engine.ui.IGNWindow;
 
 public class Main {
@@ -7,7 +8,7 @@ public class Main {
 
     public static void main(String[] args) {
         System.out.println("Igrok-Net Game Engine v" + version);
-        IGNWindow.init(args);
+        IGNEngine.init(args);
         IGNWindow window = new IGNWindow();
         window.run();
         window.dispose();

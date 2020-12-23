@@ -1,7 +1,5 @@
 #include "IGNWindow.h"
 #include "../org_igrok_net_engine_ui_IGNWindow.h"
-#include <string>
-#include <GL/freeglut.h>
 
 JNIEXPORT jlong JNICALL Java_org_igrok_1net_engine_ui_IGNWindow_createNativeWindow(JNIEnv *env, jobject jobj, jstring title, jint x, jint y, jint width, jint height)
 {
@@ -28,7 +26,9 @@ JNIEXPORT void JNICALL Java_org_igrok_1net_engine_ui_IGNWindow_mainLoop(JNIEnv *
     jmethodID onKeyRelease = env->GetMethodID(jcl, "setKeyRelease","(JJ)V");
     jmethodID onMousePress = env->GetMethodID(jcl, "setMousePress","(J)V");
     jmethodID isUpdateNeeded = env->GetMethodID(jcl, "isUpdateNeeded","()I");
-    jmethodID getFps = env->GetMethodID(jcl,"getFrameCounter","()I");
+    jmethodID renderUiFunc = env->GetMethodID(jcl,"renderUIElements","()V");
+    jmethodID render3DFunc = env->GetMethodID(jcl,"render3D","()V");
+
     IGNWindow *window = (IGNWindow *)wndPtr;
     if (window != NULL)
     {
@@ -76,42 +76,18 @@ JNIEXPORT void JNICALL Java_org_igrok_1net_engine_ui_IGNWindow_mainLoop(JNIEnv *
                 glOrtho(0, gwa.width, gwa.height, 0, -1, 1);
                 glMatrixMode(GL_MODELVIEW);
                 glLoadIdentity();
-                jint fps = env->CallIntMethod(jobj, getFps);
-                std::string  fpsStr = std::to_string(fps);
-                std::string fpsText = " fps";
-                const char * fpsString = (fpsStr+ fpsText).c_str();
-                const unsigned char *fpsToPrint = reinterpret_cast<const unsigned char*>(fpsString);
-                glRasterPos2i(10, 20);
-                glColor4f(0.0f, 0.0f, 1.0f, 1.0f);
-                glutBitmapString(GLUT_BITMAP_9_BY_15, fpsToPrint);
+                env->CallVoidMethod(jobj, renderUiFunc);
                 glLoadIdentity();
                 glMatrixMode(GL_PROJECTION);
                 glLoadIdentity();
                 gluPerspective(70, (gwa.width / (gwa.height * 1.0)), -1, 1);
                 glLoadIdentity();
+                env->CallVoidMethod(jobj, render3DFunc);
                 glLoadIdentity();
                 glXSwapBuffers(window->display, window->window);
             }
         }
     }
-}
-
-JNIEXPORT void JNICALL Java_org_igrok_1net_engine_ui_IGNWindow_init(JNIEnv *env, jclass jcl, jobjectArray args){
-    jsize arraySize = env->GetArrayLength(args);
-    char *argsvp[arraySize];
-    for (int i = 0; i < arraySize; i++)
-    {
-        jstring element = (jstring)env->GetObjectArrayElement(args, i);
-        const char *argsChars = env->GetStringUTFChars(element, 0);
-        jsize argSize = env->GetStringUTFLength(element);
-        char result[argSize];
-        strcpy(result, argsChars);
-        argsvp[i] = result;
-        env->ReleaseStringUTFChars(element, argsChars);
-        element = NULL;
-    }
-    int argscp = sizeof(argsvp);
-    glutInit(&argscp, argsvp);
 }
 
 int IGNWindow::IsSelectedEvent(Display *display, XEvent *event, XPointer args)

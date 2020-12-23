@@ -2,6 +2,7 @@ package org.igrok_net.engine.ui;
 
 import java.io.File;
 
+import org.igrok_net.engine.IGNEngine;
 import org.igrok_net.engine.ui.events.*;
 
 public class IGNWindow {
@@ -29,8 +30,6 @@ public class IGNWindow {
 
     private native void mainLoop(long wndPtr);
 
-    public static native void init(String[]args);
-
     private int isUpdateNeeded(){
         var currentTime = System.currentTimeMillis();
         var delta = currentTime - this.lastUpdate;
@@ -50,6 +49,14 @@ public class IGNWindow {
 
     private int getFrameCounter(){
         return this.currentFps;
+    }
+
+    private void renderUIElements(){
+        IGNEngine.printString2D(10, 20, 0f, 1f, 0f, 1f, getFrameCounter() + " fps");
+    }
+
+    private void render3D(){
+
     }
 
     private void setKeyPress(long key, long mod){
