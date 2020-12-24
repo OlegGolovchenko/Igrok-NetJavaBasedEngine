@@ -1,8 +1,10 @@
 #!/bin/bash
 echo "compiling java files and generating native headers"
 rm -r ./bin/*
-javac -d ./bin -cp ./bin -h ./src/natives ./src/org/igrok_net/engine/*.java ./src/org/igrok_net/engine/ui/events/*.java ./src/org/igrok_net/engine/ui/interfaces/*.java ./src/org/igrok_net/engine/ui/*.java ./src/org/igrok_net/launcher/*.java
+javac -d ./bin -cp ./bin -h ./src/natives ./src/org/igrok_net/engine/*.java ./src/org/igrok_net/engine/ui/events/*.java ./src/org/igrok_net/engine/ui/interfaces/*.java ./src/org/igrok_net/engine/ui/components/*.java ./src/org/igrok_net/engine/ui/*.java ./src/org/igrok_net/launcher/*.java
 chmod -R 775 bin
+rm -r ./doc/*
+javadoc -public -d ./doc -classpath ./bin -sourcepath ./src -subpackages org.igrok_net
 rm -r ./pkg/*
 cd ./pkg
 jar cf org.igrok-net.engine.jar -C ../bin org/igrok_net/engine/
