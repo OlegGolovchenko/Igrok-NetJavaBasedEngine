@@ -7,15 +7,15 @@ public class KeyPress {
         this.modifier = modifier;
     }
 
-    public long GetKey(){
+    public long getKey(){
         return this.key;
     }
 
-    public long GetModifier(){
+    public long getModifier(){
         return this.modifier;
     }
 
-    public static KeyPress Create(long key, long mod){
+    public static KeyPress create(long key, long mod){
         return new KeyPress(key, mod);
     }
 }

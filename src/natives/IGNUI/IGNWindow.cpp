@@ -25,6 +25,7 @@ JNIEXPORT void JNICALL Java_org_igrok_1net_engine_ui_IGNWindow_mainLoop(JNIEnv *
     jmethodID onKeyPress = env->GetMethodID(jcl, "setKeyPress", "(JJ)V");
     jmethodID onKeyRelease = env->GetMethodID(jcl, "setKeyRelease","(JJ)V");
     jmethodID onMousePress = env->GetMethodID(jcl, "setMousePress","(J)V");
+    jmethodID onMouseMoved = env->GetMethodID(jcl, "setMouseMoved","(II)V");
     jmethodID isUpdateNeeded = env->GetMethodID(jcl, "isUpdateNeeded","()I");
     jmethodID renderUiFunc = env->GetMethodID(jcl,"renderUIElements","()V");
     jmethodID render3DFunc = env->GetMethodID(jcl,"render3D","()V");
@@ -43,20 +44,25 @@ JNIEXPORT void JNICALL Java_org_igrok_1net_engine_ui_IGNWindow_mainLoop(JNIEnv *
                 if (xev.type == Expose)
                 {
                     XGetWindowAttributes(window->display, window->window, &gwa);
+                    glClearColor(1, 1, 1, 1);
                 }
-                else if (xev.type == KeyPress)
+                if (xev.type == KeyPress)
                 {
                     env->CallVoidMethod(jobj, onKeyPress, xev.xkey.keycode, xev.xkey.keycode);
                 }
-                else if (xev.type == KeyRelease)
+                if (xev.type == KeyRelease)
                 {
                     env->CallVoidMethod(jobj, onKeyRelease, xev.xkey.keycode, xev.xkey.keycode);
                 }
-                else if (xev.type == ButtonPress)
+                if (xev.type == ButtonPress)
                 {
                     env->CallVoidMethod(jobj, onMousePress, xev.xbutton.button);
                 }
-                else if (xev.type == ClientMessage)
+                if (xev.type == MotionNotify)
+                {
+                    env->CallVoidMethod(jobj, onMouseMoved, xev.xmotion.x, xev.xmotion.y);
+                }
+                if (xev.type == ClientMessage)
                 {
                     long int wmDeleteMessage = XInternAtom(window->display, "WM_DELETE_WINDOW", False);
                     if (xev.xclient.data.l[0] == wmDeleteMessage)
@@ -65,10 +71,10 @@ JNIEXPORT void JNICALL Java_org_igrok_1net_engine_ui_IGNWindow_mainLoop(JNIEnv *
                     }
                 }
             }
+            glClearColor(1, 1, 1, 1);
             if (result)
             {
                 glViewport(0, 0, gwa.width, gwa.height);
-                glClearColor(1, 1, 1, 1);
                 glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
                 glLoadIdentity();
                 glMatrixMode(GL_PROJECTION);
@@ -92,10 +98,11 @@ JNIEXPORT void JNICALL Java_org_igrok_1net_engine_ui_IGNWindow_mainLoop(JNIEnv *
 
 int IGNWindow::IsSelectedEvent(Display *display, XEvent *event, XPointer args)
 {
-    return event->type == Expose || 
-           event->type == KeyPress || 
-           event->type == KeyRelease || 
-           event->type == ButtonPress || 
+    return event->type == Expose ||
+           event->type == KeyPress ||
+           event->type == KeyRelease ||
+           event->type == ButtonPress ||
+           event->type == MotionNotify ||
            event->type == ClientMessage;
 }
 
