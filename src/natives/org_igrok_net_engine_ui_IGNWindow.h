@@ -9,26 +9,26 @@ extern "C" {
 #endif
 /*
  * Class:     org_igrok_net_engine_ui_IGNWindow
- * Method:    CreateNativeWindow
+ * Method:    createNativeWindow
  * Signature: (Ljava/lang/String;IIII)J
  */
-JNIEXPORT jlong JNICALL Java_org_igrok_1net_engine_ui_IGNWindow_CreateNativeWindow
+JNIEXPORT jlong JNICALL Java_org_igrok_1net_engine_ui_IGNWindow_createNativeWindow
   (JNIEnv *, jobject, jstring, jint, jint, jint, jint);
 
 /*
  * Class:     org_igrok_net_engine_ui_IGNWindow
- * Method:    DestroyWindow
+ * Method:    destroyWindow
  * Signature: (J)V
  */
-JNIEXPORT void JNICALL Java_org_igrok_1net_engine_ui_IGNWindow_DestroyWindow
+JNIEXPORT void JNICALL Java_org_igrok_1net_engine_ui_IGNWindow_destroyWindow
   (JNIEnv *, jobject, jlong);
 
 /*
  * Class:     org_igrok_net_engine_ui_IGNWindow
- * Method:    MainLoop
+ * Method:    mainLoop
  * Signature: (J)V
  */
-JNIEXPORT void JNICALL Java_org_igrok_1net_engine_ui_IGNWindow_MainLoop
+JNIEXPORT void JNICALL Java_org_igrok_1net_engine_ui_IGNWindow_mainLoop
   (JNIEnv *, jobject, jlong);
 
 #ifdef __cplusplus

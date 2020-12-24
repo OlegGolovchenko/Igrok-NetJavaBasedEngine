@@ -1,8 +1,4 @@
-#include <stdlib.h>
-#include <cstring>
-#include <X11/X.h>
-#include <X11/Xlib.h>
-#include <GL/glx.h>
+#include "../IGNEngine.h"
 
 class IGNWindow
 {
@@ -20,5 +16,6 @@ public:
     bool running;
     IGNWindow(const char *title, int x, int y, int width, int height);
     bool IsRunning();
+    static int IsSelectedEvent(Display * dipslay,XEvent * event, XPointer args);
     ~IGNWindow();
 };

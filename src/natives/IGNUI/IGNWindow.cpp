@@ -1,7 +1,7 @@
 #include "IGNWindow.h"
 #include "../org_igrok_net_engine_ui_IGNWindow.h"
 
-JNIEXPORT jlong JNICALL Java_org_igrok_1net_engine_ui_IGNWindow_CreateNativeWindow(JNIEnv *env, jobject jobj, jstring title, jint x, jint y, jint width, jint height)
+JNIEXPORT jlong JNICALL Java_org_igrok_1net_engine_ui_IGNWindow_createNativeWindow(JNIEnv *env, jobject jobj, jstring title, jint x, jint y, jint width, jint height)
 {
     const char *jtitle = env->GetStringUTFChars(title, NULL);
     jlong result = (jlong) new IGNWindow(jtitle, x, y, width, height);
@@ -10,7 +10,7 @@ JNIEXPORT jlong JNICALL Java_org_igrok_1net_engine_ui_IGNWindow_CreateNativeWind
     return 0;
 }
 
-JNIEXPORT void JNICALL Java_org_igrok_1net_engine_ui_IGNWindow_DestroyWindow(JNIEnv *env, jobject jobj, jlong wndPtr)
+JNIEXPORT void JNICALL Java_org_igrok_1net_engine_ui_IGNWindow_destroyWindow(JNIEnv *env, jobject jobj, jlong wndPtr)
 {
     IGNWindow *window = (IGNWindow *)wndPtr;
     if (window != NULL)
@@ -19,49 +19,91 @@ JNIEXPORT void JNICALL Java_org_igrok_1net_engine_ui_IGNWindow_DestroyWindow(JNI
     }
 }
 
-JNIEXPORT void JNICALL Java_org_igrok_1net_engine_ui_IGNWindow_MainLoop(JNIEnv *env, jobject jobj, jlong wndPtr)
+JNIEXPORT void JNICALL Java_org_igrok_1net_engine_ui_IGNWindow_mainLoop(JNIEnv *env, jobject jobj, jlong wndPtr)
 {
     jclass jcl = env->GetObjectClass(jobj);
-    jmethodID onKeyPress = env->GetMethodID(jcl, "SetKeyPress", "(JJ)V");
-    jmethodID onKeyRelease = env->GetMethodID(jcl, "SetKeyRelease","(JJ)V");
-    jmethodID onMousePress = env->GetMethodID(jcl, "SetMousePress","(J)V");
+    jmethodID onKeyPress = env->GetMethodID(jcl, "setKeyPress", "(JJ)V");
+    jmethodID onKeyRelease = env->GetMethodID(jcl, "setKeyRelease","(JJ)V");
+    jmethodID onMousePress = env->GetMethodID(jcl, "setMousePress","(J)V");
+    jmethodID onMouseMoved = env->GetMethodID(jcl, "setMouseMoved","(II)V");
+    jmethodID isUpdateNeeded = env->GetMethodID(jcl, "isUpdateNeeded","()I");
+    jmethodID renderUiFunc = env->GetMethodID(jcl,"renderUIElements","()V");
+    jmethodID render3DFunc = env->GetMethodID(jcl,"render3D","()V");
+
     IGNWindow *window = (IGNWindow *)wndPtr;
     if (window != NULL)
     {
+        XWindowAttributes gwa;
         while (window->IsRunning())
         {
-            XEvent *xev = new XEvent();
-            XNextEvent(window->display, xev);
+            jint result = env->CallIntMethod(jobj, isUpdateNeeded);
+            XEvent xev;
+            if(XCheckIfEvent(window->display, &xev, IGNWindow::IsSelectedEvent, NULL))
+            {
 
-            if (xev->type == Expose)
-            {
-                XWindowAttributes *gwa = new XWindowAttributes();
-                XGetWindowAttributes(window->display, window->window, gwa);
-                glViewport(0, 0, gwa->width, gwa->height);
-                glXSwapBuffers(window->display, window->window);
-            }
-            else if (xev->type == KeyPress)
-            {
-                env->CallVoidMethod(jobj, onKeyPress, xev->xkey.keycode, xev->xkey.keycode);
-            }
-            else if (xev->type == KeyRelease)
-            {
-                env->CallVoidMethod(jobj, onKeyRelease, xev->xkey.keycode, xev->xkey.keycode);
-            }
-            else if (xev->type == ButtonPressMask)
-            {
-                env->CallVoidMethod(jobj,onMousePress,xev->xbutton.button);
-            }
-            else if (xev->type == ClientMessage)
-            {
-                long int wmDeleteMessage = XInternAtom(window->display, "WM_DELETE_WINDOW", False);
-                if (xev->xclient.data.l[0] == wmDeleteMessage)
+                if (xev.type == Expose)
                 {
-                    window->running = false;
+                    XGetWindowAttributes(window->display, window->window, &gwa);
+                    glClearColor(1, 1, 1, 1);
                 }
+                if (xev.type == KeyPress)
+                {
+                    env->CallVoidMethod(jobj, onKeyPress, xev.xkey.keycode, xev.xkey.keycode);
+                }
+                if (xev.type == KeyRelease)
+                {
+                    env->CallVoidMethod(jobj, onKeyRelease, xev.xkey.keycode, xev.xkey.keycode);
+                }
+                if (xev.type == ButtonPress)
+                {
+                    env->CallVoidMethod(jobj, onMousePress, xev.xbutton.button);
+                }
+                if (xev.type == MotionNotify)
+                {
+                    env->CallVoidMethod(jobj, onMouseMoved, xev.xmotion.x, xev.xmotion.y);
+                }
+                if (xev.type == ClientMessage)
+                {
+                    long int wmDeleteMessage = XInternAtom(window->display, "WM_DELETE_WINDOW", False);
+                    if (xev.xclient.data.l[0] == wmDeleteMessage)
+                    {
+                        window->running = false;
+                    }
+                }
+            }
+            glClearColor(1, 1, 1, 1);
+            if (result)
+            {
+                glViewport(0, 0, gwa.width, gwa.height);
+                glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+                glLoadIdentity();
+                glMatrixMode(GL_PROJECTION);
+                glLoadIdentity();
+                glOrtho(0, gwa.width, gwa.height, 0, -1, 1);
+                glMatrixMode(GL_MODELVIEW);
+                glLoadIdentity();
+                env->CallVoidMethod(jobj, renderUiFunc);
+                glLoadIdentity();
+                glMatrixMode(GL_PROJECTION);
+                glLoadIdentity();
+                gluPerspective(70, (gwa.width / (gwa.height * 1.0)), -1, 1);
+                glLoadIdentity();
+                env->CallVoidMethod(jobj, render3DFunc);
+                glLoadIdentity();
+                glXSwapBuffers(window->display, window->window);
             }
         }
     }
+}
+
+int IGNWindow::IsSelectedEvent(Display *display, XEvent *event, XPointer args)
+{
+    return event->type == Expose ||
+           event->type == KeyPress ||
+           event->type == KeyRelease ||
+           event->type == ButtonPress ||
+           event->type == MotionNotify ||
+           event->type == ClientMessage;
 }
 
 IGNWindow::IGNWindow(const char *title, int x, int y, int width, int height)
