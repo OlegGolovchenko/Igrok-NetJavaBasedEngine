@@ -22,9 +22,8 @@ public class IGNWindow implements Disposable, ComponentContainer {
         System.load(nativeLib.getAbsolutePath());
     }
 
-    /**
-     * Native window pointer
-     */
+    private int x, y, width, height;
+
     private long wndPtr;
 
     private long initialTime = System.currentTimeMillis();
@@ -67,7 +66,7 @@ public class IGNWindow implements Disposable, ComponentContainer {
     private void renderUIElements() {
         ((Label) this.components.get(0)).setText(getFrameCounter() + " fps");
         for (Component component : this.components) {
-            component.render();
+            component.renderAtOffset(this.x, this.y);
         }
     }
 
@@ -127,7 +126,7 @@ public class IGNWindow implements Disposable, ComponentContainer {
     public IGNWindow(String title, int x, int y) {
         this(title, x, y, 800, 600);
         this.components = new ArrayList<Component>();
-        this.addChild(new Label(10, 20, getFrameCounter() + " fps"));
+        this.addChild(new Label(10, 0, getFrameCounter() + " fps"));
     }
 
     /**
@@ -141,6 +140,10 @@ public class IGNWindow implements Disposable, ComponentContainer {
     public IGNWindow(String title, int x, int y, int width, int height) {
         this.wndPtr = createNativeWindow(title, x, y, width, height);
         this.lastUpdate = System.currentTimeMillis();
+        this.x = x;
+        this.y = y;
+        this.width = width;
+        this.height = height;
     }
 
     /**

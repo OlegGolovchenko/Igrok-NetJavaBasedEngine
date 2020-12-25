@@ -23,6 +23,14 @@ JNIEXPORT void JNICALL Java_org_igrok_1net_engine_IGNEngine_init
 JNIEXPORT void JNICALL Java_org_igrok_1net_engine_IGNEngine_printString2D
   (JNIEnv *, jclass, jint, jint, jfloat, jfloat, jfloat, jfloat, jstring);
 
+/*
+ * Class:     org_igrok_net_engine_IGNEngine
+ * Method:    RenderQuad
+ * Signature: (IIIIFFFFFFFF)V
+ */
+JNIEXPORT void JNICALL Java_org_igrok_1net_engine_IGNEngine_RenderQuad
+  (JNIEnv *, jclass, jint, jint, jint, jint, jfloat, jfloat, jfloat, jfloat, jfloat, jfloat, jfloat, jfloat);
+
 #ifdef __cplusplus
 }
 #endif

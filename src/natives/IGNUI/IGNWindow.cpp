@@ -76,6 +76,13 @@ JNIEXPORT void JNICALL Java_org_igrok_1net_engine_ui_IGNWindow_mainLoop(JNIEnv *
             {
                 glViewport(0, 0, gwa.width, gwa.height);
                 glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+                glMatrixMode(GL_PROJECTION);
+                glLoadIdentity();
+                gluPerspective(70, (gwa.width / (gwa.height * 1.0)), -1, 1);
+                glLoadIdentity();
+                glClearColor(1, 1, 1, 1);
+                env->CallVoidMethod(jobj, render3DFunc);
+                glLoadIdentity();
                 glLoadIdentity();
                 glMatrixMode(GL_PROJECTION);
                 glLoadIdentity();
@@ -83,12 +90,6 @@ JNIEXPORT void JNICALL Java_org_igrok_1net_engine_ui_IGNWindow_mainLoop(JNIEnv *
                 glMatrixMode(GL_MODELVIEW);
                 glLoadIdentity();
                 env->CallVoidMethod(jobj, renderUiFunc);
-                glLoadIdentity();
-                glMatrixMode(GL_PROJECTION);
-                glLoadIdentity();
-                gluPerspective(70, (gwa.width / (gwa.height * 1.0)), -1, 1);
-                glLoadIdentity();
-                env->CallVoidMethod(jobj, render3DFunc);
                 glLoadIdentity();
                 glXSwapBuffers(window->display, window->window);
             }

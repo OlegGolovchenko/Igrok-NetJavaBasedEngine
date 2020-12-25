@@ -39,4 +39,34 @@ public class IGNEngine {
         float alpha, 
         String text
     );
+
+    /**
+     * Renders 2D rectangle
+     * @param x top-left x
+     * @param y top-left y
+     * @param width width
+     * @param height height
+     * @param red background red
+     * @param green background green
+     * @param blue background blue
+     * @param alpha background alpha
+     * @param borderRed border red
+     * @param borderGreen border green
+     * @param borderBlue border blue
+     * @param borderAlpha border alpha
+     */
+    public static native void RenderQuad(
+        int x,
+        int y,
+        int width,
+        int height,
+        float red,
+        float green,
+        float blue,
+        float alpha,
+        float borderRed,
+        float borderGreen,
+        float borderBlue,
+        float borderAlpha
+    );
 }

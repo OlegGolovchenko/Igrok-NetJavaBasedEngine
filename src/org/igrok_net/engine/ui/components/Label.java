@@ -2,14 +2,13 @@ package org.igrok_net.engine.ui.components;
 
 import org.igrok_net.engine.IGNColor;
 import org.igrok_net.engine.IGNEngine;
-import org.igrok_net.engine.ui.interfaces.Component;
 
 /**
  * Label component
  * @author Oleg Golovchenko
  * @version 0.0.1
  */
-public class Label implements Component {
+public class Label extends AbstractComponent {
 
     private int x,y;
     private String text;
@@ -30,7 +29,7 @@ public class Label implements Component {
      * @param text text to print
      */
     public Label(int x, int y, String text) {
-        this(x, y, text, new IGNColor(0, 0, 0, 1));
+        this(x, y, text, IGNColor.BLACK_COLOR);
     }
 
     /**
@@ -76,10 +75,24 @@ public class Label implements Component {
      */
     @Override
     public void dispose() {
-        this.x = 0;
-        this.y = 0;
+        super.dispose();
         this.text = null;
         this.color = null;
+    }
+
+    /*
+    * (non-Javadoc) @see org.igrok_net.engine.ui.interfaces.Component#renderAtOffset()
+    */
+    @Override
+    public void renderAtOffset(int xOffset, int yOffset) {
+        IGNEngine.printString2D(
+            this.x + xOffset, 
+            this.y + yOffset + 20, 
+            this.color.getRed(), 
+            this.color.getGreen(), 
+            this.color.getBlue(),
+            this.color.getAlpha(), 
+            text);
     }
     
 }
