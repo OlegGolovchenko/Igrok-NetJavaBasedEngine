@@ -2,6 +2,8 @@ package org.igrok_net.launcher;
 
 import org.igrok_net.engine.IGNEngine;
 import org.igrok_net.engine.ui.IGNWindow;
+import org.igrok_net.engine.ui.components.Label;
+import org.igrok_net.engine.ui.components.Panel;
 
 /**
  * Main class of launcher
@@ -9,7 +11,7 @@ import org.igrok_net.engine.ui.IGNWindow;
  * @version 0.0.1
  */
 public class Main {
-    private static String version = "1.0.0";
+    private static String version = "0.0.1";
 
     /**
      * Entry point of program
@@ -19,6 +21,12 @@ public class Main {
         System.out.println("Igrok-Net Game Engine v" + version);
         IGNEngine.init(args);
         IGNWindow window = new IGNWindow();
+        Panel test = new Panel();
+        Label testLbl = new Label(0, 0, "Test", IGNEngine.GLUT_BITMAP_9_BY_15());
+        test.addChild(testLbl);
+        test.reposition(50, 50);
+        test.resize(100, 100);
+        window.addChild(test);
         window.run();
         window.dispose();
     }
