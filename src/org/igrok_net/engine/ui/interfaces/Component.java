@@ -1,6 +1,8 @@
 package org.igrok_net.engine.ui.interfaces;
 
 import org.igrok_net.engine.IGNColor;
+import org.igrok_net.engine.ui.events.KeyPress;
+import org.igrok_net.engine.ui.events.MouseMoved;
 
 /**
  * Marks object as Dsiposable Component
@@ -41,4 +43,33 @@ public interface Component extends Disposable {
      * @param yOffset y offset
      */
     void renderAtOffset(int xOffset, int yOffset);
+
+    /**
+     * Sends key press event
+     * @param sender sender
+     * @param args arguments
+     */
+    void sendKeyEvent(Object sender, KeyPress args);
+
+    /**
+     * Sends key released event
+     * @param sender sender
+     * @param args arguments
+     */
+    void sendKeyReleaseEvent(Object sender, KeyPress args);
+    
+    /**
+     * Sends mouse move event
+     * @param sender sender
+     * @param args arguments
+     */
+    void sendMouseMovedEvent(Object sender, MouseMoved args);
+
+    /**
+     * Checks if mouse is inside
+     * @param x mouse pointer x
+     * @param y mouse pointer y
+     * @return true if inside false otherwise
+     */
+    boolean isMouseInside(int x, int y);
 }

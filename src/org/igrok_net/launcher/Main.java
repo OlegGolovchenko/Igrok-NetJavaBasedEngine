@@ -11,7 +11,7 @@ import org.igrok_net.engine.ui.components.Panel;
  * @version 0.0.1
  */
 public class Main {
-    private static String version = "1.0.0";
+    private static String version = "0.0.1";
 
     /**
      * Entry point of program
@@ -22,7 +22,7 @@ public class Main {
         IGNEngine.init(args);
         IGNWindow window = new IGNWindow();
         Panel test = new Panel();
-        Label testLbl = new Label(0,0,"Test");
+        Label testLbl = new Label(0, 0, "Test", IGNEngine.GLUT_BITMAP_9_BY_15());
         test.addChild(testLbl);
         test.reposition(50, 50);
         test.resize(100, 100);

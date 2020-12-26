@@ -1,6 +1,8 @@
 package org.igrok_net.engine.ui.components;
 
 import org.igrok_net.engine.IGNColor;
+import org.igrok_net.engine.ui.events.KeyPress;
+import org.igrok_net.engine.ui.events.MouseMoved;
 import org.igrok_net.engine.ui.interfaces.Component;
 
 /**
@@ -9,8 +11,20 @@ import org.igrok_net.engine.ui.interfaces.Component;
  * @version 0.0.1
  */
 public abstract class AbstractComponent implements Component {
-    protected int x, y, width, height;
+    protected int x, y, width, height, mouseX, mouseY;
     protected IGNColor background, border;
+
+    protected void onMousePress(Object sender, long button) {
+    }
+
+    protected void onKeyPress(Object sender, KeyPress eventArgs) {
+    }
+
+    protected void onKeyRelease(Object sender, KeyPress eventArgs) {
+    }
+
+    protected void onMouseMoved(Object sender, MouseMoved eventArgs) {
+    }
 
     /**
      * Initialises abstract component
@@ -57,4 +71,31 @@ public abstract class AbstractComponent implements Component {
         this.border = border;
     }
 
+    @Override
+    public boolean isMouseInside(int x, int y) {
+        if(this.x < x && this.width > x){
+            if(this.y < y && this.height > y){
+                return true;
+            }
+            return false;
+        }
+        return false;
+    }
+    
+    @Override
+    public void sendKeyEvent(Object sender, KeyPress args) {
+        this.onKeyPress(sender, args);
+    }
+
+    @Override
+    public void sendKeyReleaseEvent(Object sender, KeyPress args) {
+        this.onKeyRelease(sender, args);
+    }
+    
+    @Override
+    public void sendMouseMovedEvent(Object sender, MouseMoved args) {
+        this.mouseX = args.getX();
+        this.mouseY = args.getY();
+        this.onMouseMoved(sender, args);
+    }
 }

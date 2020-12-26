@@ -7,6 +7,7 @@ import java.util.List;
 import org.igrok_net.engine.ui.interfaces.Component;
 import org.igrok_net.engine.ui.interfaces.ComponentContainer;
 import org.igrok_net.engine.ui.interfaces.Disposable;
+import org.igrok_net.engine.IGNEngine;
 import org.igrok_net.engine.ui.components.Label;
 import org.igrok_net.engine.ui.events.*;
 
@@ -22,7 +23,7 @@ public class IGNWindow implements Disposable, ComponentContainer {
         System.load(nativeLib.getAbsolutePath());
     }
 
-    private int x, y, width, height;
+    private int x, y, width, height, mouseX, mouseY;
 
     private long wndPtr;
 
@@ -90,16 +91,33 @@ public class IGNWindow implements Disposable, ComponentContainer {
         onMouseMoved(this, MouseMoved.create(x, y));
     }
 
-    private void onMousePress(IGNWindow ignWindow, long button) {
+    protected void onMousePress(IGNWindow ignWindow, long button) {
     }
 
     protected void onKeyPress(Object sender, KeyPress eventArgs) {
+        for(Component component:this.components){
+            if(component.isMouseInside(this.mouseX, this.mouseY)){
+                component.sendKeyEvent(sender, eventArgs);
+            }
+        }
     }
 
     protected void onKeyRelease(Object sender, KeyPress eventArgs) {
+        for(Component component:this.components){
+            if(component.isMouseInside(this.mouseX, this.mouseY)){
+                component.sendKeyReleaseEvent(sender, eventArgs);
+            }
+        }
     }
 
     protected void onMouseMoved(Object sender, MouseMoved eventArgs) {
+        this.mouseX = eventArgs.getX();
+        this.mouseY = eventArgs.getY();
+        for(Component component:this.components){
+            if(component.isMouseInside(this.mouseX, this.mouseY)){
+                component.sendMouseMovedEvent(sender, eventArgs);
+            }
+        }
     }
 
     /**
@@ -126,7 +144,7 @@ public class IGNWindow implements Disposable, ComponentContainer {
     public IGNWindow(String title, int x, int y) {
         this(title, x, y, 800, 600);
         this.components = new ArrayList<Component>();
-        this.addChild(new Label(10, 0, getFrameCounter() + " fps"));
+        this.addChild(new Label(10, 0, getFrameCounter() + " fps", IGNEngine.GLUT_BITMAP_9_BY_15()));
     }
 
     /**
