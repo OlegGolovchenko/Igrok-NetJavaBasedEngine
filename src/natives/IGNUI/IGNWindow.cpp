@@ -22,8 +22,8 @@ JNIEXPORT void JNICALL Java_org_igrok_1net_engine_ui_IGNWindow_destroyWindow(JNI
 JNIEXPORT void JNICALL Java_org_igrok_1net_engine_ui_IGNWindow_mainLoop(JNIEnv *env, jobject jobj, jlong wndPtr)
 {
     jclass jcl = env->GetObjectClass(jobj);
-    jmethodID onKeyPress = env->GetMethodID(jcl, "setKeyPress", "(JJ)V");
-    jmethodID onKeyRelease = env->GetMethodID(jcl, "setKeyRelease","(JJ)V");
+    jmethodID onKeyPress = env->GetMethodID(jcl, "setKeyPress", "(JJLjava/lang/String;)V");
+    jmethodID onKeyRelease = env->GetMethodID(jcl, "setKeyRelease","(JJLjava/lang/String;)V");
     jmethodID onMousePress = env->GetMethodID(jcl, "setMousePress","(J)V");
     jmethodID onMouseMoved = env->GetMethodID(jcl, "setMouseMoved","(II)V");
     jmethodID isUpdateNeeded = env->GetMethodID(jcl, "isUpdateNeeded","()I");
@@ -38,6 +38,8 @@ JNIEXPORT void JNICALL Java_org_igrok_1net_engine_ui_IGNWindow_mainLoop(JNIEnv *
         {
             jint result = env->CallIntMethod(jobj, isUpdateNeeded);
             XEvent xev;
+            XIM xim = XOpenIM(window->display, 0, 0, 0);
+            XIC xic = XCreateIC(xim, XNInputStyle, XIMPreeditNothing | XIMStatusNothing, NULL);
             if(XCheckIfEvent(window->display, &xev, IGNWindow::IsSelectedEvent, NULL))
             {
 
@@ -48,11 +50,21 @@ JNIEXPORT void JNICALL Java_org_igrok_1net_engine_ui_IGNWindow_mainLoop(JNIEnv *
                 }
                 if (xev.type == KeyPress)
                 {
-                    env->CallVoidMethod(jobj, onKeyPress, xev.xkey.keycode, xev.xkey.keycode);
+                    char buffer[256];
+                    KeySym ignore;
+                    Status return_status;
+                    Xutf8LookupString(xic, &xev.xkey, buffer, sizeof(buffer), &ignore, &return_status);
+                    jstring charString = env->NewStringUTF(buffer);
+                    env->CallVoidMethod(jobj, onKeyPress, xev.xkey.keycode, xev.xkey.keycode, charString);
                 }
                 if (xev.type == KeyRelease)
                 {
-                    env->CallVoidMethod(jobj, onKeyRelease, xev.xkey.keycode, xev.xkey.keycode);
+                    char buffer[256];
+                    KeySym ignore;
+                    Status return_status;
+                    Xutf8LookupString(xic, &xev.xkey, buffer, sizeof(buffer), &ignore, &return_status);
+                    jstring charString = env->NewStringUTF(buffer);
+                    env->CallVoidMethod(jobj, onKeyRelease, xev.xkey.keycode, xev.xkey.keycode, charString);
                 }
                 if (xev.type == ButtonPress)
                 {

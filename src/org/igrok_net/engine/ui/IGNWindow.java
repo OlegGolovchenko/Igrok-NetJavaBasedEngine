@@ -75,12 +75,12 @@ public class IGNWindow implements Disposable, ComponentContainer {
 
     }
 
-    private void setKeyPress(long key, long mod) {
-        onKeyPress(this, KeyPress.create(key, mod));
+    private void setKeyPress(long key, long mod, String keyChar) {
+        onKeyPress(this, KeyPress.create(key, mod, keyChar));
     }
 
-    private void setKeyRelease(long key, long mod) {
-        onKeyRelease(this, KeyPress.create(key, mod));
+    private void setKeyRelease(long key, long mod, String keyChar) {
+        onKeyRelease(this, KeyPress.create(key, mod, keyChar));
     }
 
     private void setMousePress(long button) {

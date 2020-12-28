@@ -1,6 +1,7 @@
 package org.igrok_net.engine.ui.components;
 
 import org.igrok_net.engine.IGNColor;
+import org.igrok_net.engine.ui.events.KeyCodes;
 import org.igrok_net.engine.ui.events.KeyPress;
 
 public class TextBox extends AbstractContainerComponent {
@@ -19,6 +20,17 @@ public class TextBox extends AbstractContainerComponent {
 
     @Override
     protected void onKeyPress(Object sender, KeyPress args){
-        
+        long backSpaceCode = KeyCodes.XK_BackSpace;
+        long deleteCode = KeyCodes.XK_Delete;
+        if(!args.getKeyChars().isBlank()&&!args.getKeyChars().isEmpty()){
+            text+=args.getKeyChars();
+        }else{
+            if(args.getKey() == backSpaceCode){
+                text = text.substring(0,text.length()-2);
+            }
+            if(args.getKey() == deleteCode){
+                text = "";
+            }
+        }
     }
 }
