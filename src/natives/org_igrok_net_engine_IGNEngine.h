@@ -97,6 +97,14 @@ JNIEXPORT void JNICALL Java_org_igrok_1net_engine_IGNEngine_printString2D
 
 /*
  * Class:     org_igrok_net_engine_IGNEngine
+ * Method:    MeasureString
+ * Signature: (JLjava/lang/String;)I
+ */
+JNIEXPORT jint JNICALL Java_org_igrok_1net_engine_IGNEngine_MeasureString
+  (JNIEnv *, jclass, jlong, jstring);
+
+/*
+ * Class:     org_igrok_net_engine_IGNEngine
  * Method:    RenderQuad
  * Signature: (IIIIFFFFFFFF)V
  */

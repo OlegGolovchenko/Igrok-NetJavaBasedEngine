@@ -53,6 +53,17 @@ public class IGNEngine {
     );
 
     /**
+     * Measures string to see if it fits inside width of the element
+     * @param font font to use for writing
+     * @param text text to measure
+     * @return width of string
+     */
+    public static native int MeasureString(
+        long font, 
+        String text
+    );
+
+    /**
      * Renders 2D rectangle
      * @param x top-left x
      * @param y top-left y

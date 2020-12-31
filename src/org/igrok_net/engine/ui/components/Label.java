@@ -11,7 +11,6 @@ import org.igrok_net.engine.IGNEngine;
  */
 public class Label extends AbstractComponent {
 
-    private int x, y;
     private String text;
     private IGNColor color;
     private long font;
@@ -46,13 +45,15 @@ public class Label extends AbstractComponent {
      * @param color color of text to print
      */
     public Label(int x, int y, String text, long font, IGNColor color) {
-        super();
+        super(x,y,0,0);
         this.x = x;
         this.y = y;
         this.text = text;
         this.color = color;
         this.font = font;
         this.calcFontOffset(font);
+        this.height = this.fontOffset + 10;
+        this.width = IGNEngine.MeasureString(font, text);
     }
 
     private void calcFontOffset(long font) {

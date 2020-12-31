@@ -27,8 +27,8 @@ JNIEXPORT void JNICALL Java_org_igrok_1net_engine_ui_IGNWindow_mainLoop(JNIEnv *
     jmethodID onMousePress = env->GetMethodID(jcl, "setMousePress","(J)V");
     jmethodID onMouseMoved = env->GetMethodID(jcl, "setMouseMoved","(II)V");
     jmethodID isUpdateNeeded = env->GetMethodID(jcl, "isUpdateNeeded","()I");
-    jmethodID renderUiFunc = env->GetMethodID(jcl,"renderUIElements","()V");
     jmethodID render3DFunc = env->GetMethodID(jcl,"render3D","()V");
+    jmethodID getFps = env->GetMethodID(jcl, "getFrameCounter", "()I");
 
     IGNWindow *window = (IGNWindow *)wndPtr;
     if (window != NULL)
@@ -37,6 +37,8 @@ JNIEXPORT void JNICALL Java_org_igrok_1net_engine_ui_IGNWindow_mainLoop(JNIEnv *
         while (window->IsRunning())
         {
             jint result = env->CallIntMethod(jobj, isUpdateNeeded);
+            jint fpsCount = env->CallIntMethod(jobj, getFps);
+            window->SetFps(fpsCount);
             XEvent xev;
             XIM xim = XOpenIM(window->display, 0, 0, 0);
             XIC xic = XCreateIC(xim, XNInputStyle, XIMPreeditNothing | XIMStatusNothing, NULL);
@@ -101,7 +103,7 @@ JNIEXPORT void JNICALL Java_org_igrok_1net_engine_ui_IGNWindow_mainLoop(JNIEnv *
                 glOrtho(0, gwa.width, gwa.height, 0, -1, 1);
                 glMatrixMode(GL_MODELVIEW);
                 glLoadIdentity();
-                env->CallVoidMethod(jobj, renderUiFunc);
+                window->RenderUI();
                 glLoadIdentity();
                 glXSwapBuffers(window->display, window->window);
             }
@@ -153,11 +155,33 @@ IGNWindow::IGNWindow(const char *title, int x, int y, int width, int height)
         XSetWMProtocols(this->display, this->window, &vmDeleteMessage, GL_TRUE);
         this->running = true;
     }
+    this->components = new std::list<IGNComponent *>();
+    this->fpsLabel = NULL;
+    this->AddFpsLabel(0, GLUT_BITMAP_9_BY_15);
 }
 
 bool IGNWindow::IsRunning()
 {
     return this->running;
+}
+
+void IGNWindow::RenderUI(){
+    for (std::list<IGNComponent *>::iterator it = this->components->begin(); it != this->components->end(); it++)
+    {        
+        (*it)->Render();
+    }
+}
+
+void IGNWindow::AddFpsLabel(int fps, void * font){
+    std::string fpsString = fps+" fps";
+    this->fpsLabel = new IGNLabel(0, 20, 100, 25, fpsString, new IGNColor(0, 0, 0, 1), font);
+    this->components->push_back(this->fpsLabel);
+}
+
+void IGNWindow::SetFps(int fps){
+    std::string fpsString = std::to_string(fps);
+    fpsString += " fps";
+    this->fpsLabel->SetText(fpsString);
 }
 
 IGNWindow::~IGNWindow()
@@ -172,5 +196,13 @@ IGNWindow::~IGNWindow()
         XDestroyWindow(this->display, this->window);
         XCloseDisplay(this->display);
         this->display = NULL;
+    }
+    this->components->clear();
+    if (this->fpsLabel != NULL)
+    {
+        delete this->fpsLabel;
+    }
+    if(this->components != NULL){
+        delete this->components;
     }
 }
