@@ -33,16 +33,6 @@ JNIEXPORT void JNICALL Java_org_igrok_1net_engine_IGNEngine_printString2D(JNIEnv
     env->ReleaseStringUTFChars(text, textChars);
 }
 
-JNIEXPORT jint JNICALL Java_org_igrok_1net_engine_IGNEngine_MeasureString(JNIEnv *env, jclass jcl, jlong font, jstring text)
-{
-    const char *textChars = env->GetStringUTFChars(text, NULL);
-    const unsigned char *printeableTextChars = reinterpret_cast<const unsigned char *>(textChars);
-    int width=0;
-    width = glutBitmapLength((void *)font, printeableTextChars);
-    env->ReleaseStringUTFChars(text, textChars);
-    return width;
-}
-
 JNIEXPORT void JNICALL Java_org_igrok_1net_engine_IGNEngine_RenderQuad(JNIEnv *env, jclass jcl, jint x, jint y, jint w, jint h, jfloat r, jfloat g, jfloat b, jfloat a, jfloat br, jfloat bg, jfloat bb, jfloat ba)
 {
     glBegin(GL_QUADS);

@@ -12,15 +12,12 @@ jar cfe org.igrok-net.launcher.jar org.igrok_net.launcher.Main -C ../bin org/igr
 cd ..
 echo "done."
 echo "compiling native library"
-rm -r ./obj/*
-mkdir ./obj/ui
-gcc -I /usr/lib/jvm/adoptopenjdk-15-hotspot-amd64/include/ -I /usr/lib/jvm/adoptopenjdk-15-hotspot-amd64/include/linux/ -c -Wall -Werror -fpic -o ./obj/ui/IGNWindow.o ./src/natives/IGNUI/IGNWindow.cpp
-gcc -I /usr/lib/jvm/adoptopenjdk-15-hotspot-amd64/include/ -I /usr/lib/jvm/adoptopenjdk-15-hotspot-amd64/include/linux/ -c -Wall -Werror -fpic -o ./obj/ui/IGNComponent.o ./src/natives/IGNUI/IGNComponent.cpp
-gcc -I /usr/lib/jvm/adoptopenjdk-15-hotspot-amd64/include/ -I /usr/lib/jvm/adoptopenjdk-15-hotspot-amd64/include/linux/ -c -Wall -Werror -fpic -o ./obj/IGNEngine.o ./src/natives/IGNEngine.cpp
-gcc -I /usr/lib/jvm/adoptopenjdk-15-hotspot-amd64/include/ -I /usr/lib/jvm/adoptopenjdk-15-hotspot-amd64/include/linux/ -c -Wall -Werror -fpic -o ./obj/IGNColor.o ./src/natives/IGNColor.cpp
+rm ./obj/IGNUI.o
+gcc -I /usr/lib/jvm/adoptopenjdk-15-hotspot-amd64/include/ -I /usr/lib/jvm/adoptopenjdk-15-hotspot-amd64/include/linux/ -c -Wall -Werror -fpic -o ./obj/IGNUI.o ./src/natives/IGNUI/*.cpp
+gcc -I /usr/lib/jvm/adoptopenjdk-15-hotspot-amd64/include/ -I /usr/lib/jvm/adoptopenjdk-15-hotspot-amd64/include/linux/ -c -Wall -Werror -fpic -o ./obj/IGNEngine.o ./src/natives/*.cpp
 echo "done."
 echo "linking native library"
 rm -r ./lib/*
-gcc -shared -o ./lib/libIGNEngine.so ./obj/IGNEngine.o ./obj/IGNColor.o -lX11 -lGL -lGLU -lglut
-gcc -shared -o ./lib/libIGNUI.so ./obj/IGNColor.o ./obj/ui/*.o -lX11 -lGL -lGLU -lglut
+gcc -shared -o ./lib/libIGNUI.so ./obj/IGNUI.o -lX11 -lGL -lGLU -lglut
+gcc -shared -o ./lib/libIGNEngine.so ./obj/IGNEngine.o -lX11 -lGL -lGLU -lglut
 echo "done."
