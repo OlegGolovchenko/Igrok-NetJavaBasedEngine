@@ -9,13 +9,15 @@ private:
     Colormap cmap;
     XSetWindowAttributes *swa;
     GLXContext glc;
-
 public:
+    int currentFps;
     Display *display;
     Window window;
     bool running;
     IGNWindow(const char *title, int x, int y, int width, int height);
     bool IsRunning();
+    void RenderUI();
+    void SetFps();
     static int IsSelectedEvent(Display * dipslay,XEvent * event, XPointer args);
     ~IGNWindow();
 };

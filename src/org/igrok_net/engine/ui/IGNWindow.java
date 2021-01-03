@@ -43,6 +43,8 @@ public class IGNWindow implements Disposable, ComponentContainer {
 
     private native void mainLoop(long wndPtr);
 
+    private native void augmentFps(long wndPtr, int fps);
+
     private int isUpdateNeeded() {
         var currentTime = System.currentTimeMillis();
         var delta = currentTime - this.lastUpdate;
@@ -54,7 +56,8 @@ public class IGNWindow implements Disposable, ComponentContainer {
         }
         if (deltaInitial > 1000) {
             this.currentFps = frameCounter;
-            this.frameCounter = 0;
+            this.frameCounter = 0;            
+            augmentFps(wndPtr, this.currentFps);
             this.initialTime = currentTime;
         }
         return 0;

@@ -19,6 +19,15 @@ JNIEXPORT void JNICALL Java_org_igrok_1net_engine_ui_IGNWindow_destroyWindow(JNI
     }
 }
 
+JNIEXPORT void JNICALL Java_org_igrok_1net_engine_ui_IGNWindow_augmentFps(JNIEnv *env, jobject jobj, jlong wndPtr, jint fps)
+{
+    IGNWindow *window = (IGNWindow *)wndPtr;
+    if (window != NULL)
+    {
+        window->currentFps = fps;
+    }
+}
+
 JNIEXPORT void JNICALL Java_org_igrok_1net_engine_ui_IGNWindow_mainLoop(JNIEnv *env, jobject jobj, jlong wndPtr)
 {
     jclass jcl = env->GetObjectClass(jobj);
@@ -33,14 +42,14 @@ JNIEXPORT void JNICALL Java_org_igrok_1net_engine_ui_IGNWindow_mainLoop(JNIEnv *
     IGNWindow *window = (IGNWindow *)wndPtr;
     if (window != NULL)
     {
+        XIM xim = XOpenIM(window->display, 0, 0, 0);
+        XIC xic = XCreateIC(xim, XNInputStyle, XIMPreeditNothing | XIMStatusNothing, NULL);
         XWindowAttributes gwa;
         while (window->IsRunning())
         {
             jint result = env->CallIntMethod(jobj, isUpdateNeeded);
             XEvent xev;
-            XIM xim = XOpenIM(window->display, 0, 0, 0);
-            XIC xic = XCreateIC(xim, XNInputStyle, XIMPreeditNothing | XIMStatusNothing, NULL);
-            if(XCheckIfEvent(window->display, &xev, IGNWindow::IsSelectedEvent, NULL))
+            if (XCheckIfEvent(window->display, &xev, IGNWindow::IsSelectedEvent, NULL))
             {
 
                 if (xev.type == Expose)
@@ -86,6 +95,7 @@ JNIEXPORT void JNICALL Java_org_igrok_1net_engine_ui_IGNWindow_mainLoop(JNIEnv *
             glClearColor(1, 1, 1, 1);
             if (result)
             {
+                window->SetFps();
                 glViewport(0, 0, gwa.width, gwa.height);
                 glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
                 glMatrixMode(GL_PROJECTION);
@@ -153,11 +163,17 @@ IGNWindow::IGNWindow(const char *title, int x, int y, int width, int height)
         XSetWMProtocols(this->display, this->window, &vmDeleteMessage, GL_TRUE);
         this->running = true;
     }
+    this->currentFps = 0;
 }
 
 bool IGNWindow::IsRunning()
 {
     return this->running;
+}
+
+void IGNWindow::SetFps(){
+    std::string fpsString = std::to_string(this->currentFps);
+    fpsString += " fps";
 }
 
 IGNWindow::~IGNWindow()
