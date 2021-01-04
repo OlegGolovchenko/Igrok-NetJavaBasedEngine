@@ -24,9 +24,9 @@ public class Main {
         IGNWindow window = new IGNWindow();
         Panel test = new Panel();
         Label testLbl = new Label(0, 0, "Test", IGNEngine.GLUT_BITMAP_9_BY_15());
-        TextBox tbTest = new TextBox("type here", IGNEngine.GLUT_BITMAP_9_BY_15());
+        TextBox tbTest = new TextBox(100, 20, "type here", IGNEngine.GLUT_BITMAP_9_BY_15());
         tbTest.reposition(0, 50);
-        tbTest.resize(50, 50);
+        testLbl.resize(50, 50);
         test.addChild(testLbl);
         test.addChild(tbTest);
         test.reposition(50, 50);

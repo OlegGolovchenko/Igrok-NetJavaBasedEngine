@@ -50,12 +50,12 @@ public abstract class AbstractContainerComponent extends AbstractComponent imple
     public void removeAll() {
         this.components.clear();
     }
-    
+
     @Override
     public void sendKeyEvent(Object sender, KeyPress args) {
-        super.sendKeyEvent(sender, args);    
-        for(Component component:this.components){
-            if(component.isMouseInside(this.mouseX, this.mouseY)){
+        super.sendKeyEvent(sender, args);
+        for (Component component : this.components) {
+            if (component.isMouseInside(this.mouseX - this.x, this.mouseY - this.y)) {
                 component.sendKeyEvent(sender, args);
             }
         }
@@ -64,8 +64,8 @@ public abstract class AbstractContainerComponent extends AbstractComponent imple
     @Override
     public void sendKeyReleaseEvent(Object sender, KeyPress args) {
         super.sendKeyReleaseEvent(sender, args);
-        for(Component component:this.components){
-            if(component.isMouseInside(this.mouseX, this.mouseY)){
+        for (Component component : this.components) {
+            if (component.isMouseInside(this.mouseX - this.x, this.mouseY - this.y)) {
                 component.sendKeyReleaseEvent(sender, args);
             }
         }
@@ -74,8 +74,8 @@ public abstract class AbstractContainerComponent extends AbstractComponent imple
     @Override
     public void sendMouseMovedEvent(Object sender, MouseMoved args) {
         super.sendMouseMovedEvent(sender, args);
-        for(Component component:this.components){
-            if(component.isMouseInside(this.mouseX, this.mouseY)){
+        for (Component component : this.components) {
+            if (component.isMouseInside(this.mouseX - this.x, this.mouseY - this.y)) {
                 component.sendMouseMovedEvent(sender, args);
             }
         }
@@ -87,7 +87,7 @@ public abstract class AbstractContainerComponent extends AbstractComponent imple
     @Override
     public void dispose() {
         super.dispose();
-        for(Component component: this.components){
+        for (Component component : this.components) {
             component.dispose();
         }
         this.removeAll();

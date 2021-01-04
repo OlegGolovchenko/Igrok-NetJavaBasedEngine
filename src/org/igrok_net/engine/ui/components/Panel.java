@@ -44,7 +44,8 @@ public class Panel extends AbstractContainerComponent {
         for (Component component : this.components) {
             component.renderAtOffset(this.x + xOffset, this.y + yOffset);
         }
-        IGNEngine.RenderQuad(x, y, width, height, this.background.getRed(), this.background.getGreen(),
+        IGNEngine.RenderQuad(x + xOffset, y + yOffset, width, height, this.background.getRed(),
+                this.background.getGreen(),
                 this.background.getBlue(), this.background.getAlpha(), this.border.getRed(), this.border.getGreen(),
                 this.border.getBlue(), this.border.getAlpha());
     }
