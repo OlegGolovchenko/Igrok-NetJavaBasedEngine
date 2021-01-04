@@ -32,5 +32,6 @@ public class TextBox extends AbstractContainerComponent {
                 text = "";
             }
         }
+        lblText.setText(text);
     }
 }

@@ -42,8 +42,6 @@ JNIEXPORT void JNICALL Java_org_igrok_1net_engine_ui_IGNWindow_mainLoop(JNIEnv *
     IGNWindow *window = (IGNWindow *)wndPtr;
     if (window != NULL)
     {
-        XIM xim = XOpenIM(window->display, 0, 0, 0);
-        XIC xic = XCreateIC(xim, XNInputStyle, XIMPreeditNothing | XIMStatusNothing, NULL);
         XWindowAttributes gwa;
         while (window->IsRunning())
         {
@@ -59,21 +57,31 @@ JNIEXPORT void JNICALL Java_org_igrok_1net_engine_ui_IGNWindow_mainLoop(JNIEnv *
                 }
                 if (xev.type == KeyPress)
                 {
-                    char buffer[256];
+                    XIM xim = XOpenIM(window->display, 0, 0, 0);
+                    XIC xic = XCreateIC(xim, XNInputStyle, XIMPreeditNothing | XIMStatusNothing, NULL);
+                    char buffer[2];
                     KeySym ignore;
                     Status return_status;
                     Xutf8LookupString(xic, &xev.xkey, buffer, sizeof(buffer), &ignore, &return_status);
+                    buffer[2] = 0;
                     jstring charString = env->NewStringUTF(buffer);
                     env->CallVoidMethod(jobj, onKeyPress, xev.xkey.keycode, xev.xkey.keycode, charString);
+                    XDestroyIC(xic);
+                    XCloseIM(xim);
                 }
                 if (xev.type == KeyRelease)
                 {
-                    char buffer[256];
+                    XIM xim = XOpenIM(window->display, 0, 0, 0);
+                    XIC xic = XCreateIC(xim, XNInputStyle, XIMPreeditNothing | XIMStatusNothing, NULL);
+                    char buffer[2];
                     KeySym ignore;
                     Status return_status;
                     Xutf8LookupString(xic, &xev.xkey, buffer, sizeof(buffer), &ignore, &return_status);
+                    buffer[2] = 0;
                     jstring charString = env->NewStringUTF(buffer);
                     env->CallVoidMethod(jobj, onKeyRelease, xev.xkey.keycode, xev.xkey.keycode, charString);
+                    XDestroyIC(xic);
+                    XCloseIM(xim);
                 }
                 if (xev.type == ButtonPress)
                 {
