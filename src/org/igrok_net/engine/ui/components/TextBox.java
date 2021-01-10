@@ -14,7 +14,8 @@ public class TextBox extends AbstractContainerComponent {
         super();
         this.text = text;
         this.font = font;
-        lblText = new Label(0, 0, this.text, this.font, IGNColor.BLACK_COLOR);
+        this.lblText = new Label(0, 0, this.text, this.font, IGNColor.BLACK_COLOR);
+        this.lblText.resize(width, height);
         this.pnlBackground = new Panel();
         this.pnlBackground.reposition(0, 0);
         this.pnlBackground.resize(width, height);

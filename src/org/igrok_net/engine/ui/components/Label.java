@@ -114,7 +114,17 @@ public class Label extends AbstractComponent {
      */
     @Override
     public void renderAtOffset(int xOffset, int yOffset) {
-        IGNEngine.printString2D(this.x + xOffset, this.y + yOffset + this.fontOffset, this.color.getRed(),
-                this.color.getGreen(), this.color.getBlue(), this.color.getAlpha(), this.text, this.font);
+        int position = 0;
+        String renderedText = this.text.substring(position);
+        int stringWidth = IGNEngine.measureString(this.font, renderedText);
+        while(stringWidth >= this.width){
+            position++;
+            renderedText = this.text.substring(position);
+            stringWidth = IGNEngine.measureString(this.font, renderedText);
+        }
+        if (stringWidth < this.width) {
+            IGNEngine.printString2D(this.x + xOffset, this.y + yOffset + this.fontOffset, this.color.getRed(),
+                    this.color.getGreen(), this.color.getBlue(), this.color.getAlpha(), renderedText, this.font);
+        }
     }
 }

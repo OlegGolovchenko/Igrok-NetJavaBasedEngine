@@ -81,4 +81,12 @@ public class IGNEngine {
         float borderBlue,
         float borderAlpha
     );
+
+    /**
+     * Measures rendered String
+     * @param font font used to render
+     * @param text string that is rendered
+     * @return length of string
+     */
+    public static native int measureString(long font, String text);
 }

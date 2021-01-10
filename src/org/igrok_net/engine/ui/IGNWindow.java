@@ -37,6 +37,8 @@ public class IGNWindow implements Disposable, ComponentContainer {
 
     private List<Component> components;
 
+    private Label lblFps;
+
     private native long createNativeWindow(String title, int x, int y, int width, int height);
 
     private native void destroyWindow(long wndPtr);
@@ -147,7 +149,9 @@ public class IGNWindow implements Disposable, ComponentContainer {
     public IGNWindow(String title, int x, int y) {
         this(title, x, y, 800, 600);
         this.components = new ArrayList<Component>();
-        this.addChild(new Label(10, 0, getFrameCounter() + " fps", IGNEngine.GLUT_BITMAP_9_BY_15()));
+        this.lblFps = new Label(10, 0, getFrameCounter() + " fps", IGNEngine.GLUT_BITMAP_9_BY_15());
+        this.lblFps.resize(100, 50);
+        this.addChild(lblFps);
     }
 
     /**

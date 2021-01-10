@@ -103,6 +103,14 @@ JNIEXPORT void JNICALL Java_org_igrok_1net_engine_IGNEngine_printString2D
 JNIEXPORT void JNICALL Java_org_igrok_1net_engine_IGNEngine_RenderQuad
   (JNIEnv *, jclass, jint, jint, jint, jint, jfloat, jfloat, jfloat, jfloat, jfloat, jfloat, jfloat, jfloat);
 
+/*
+ * Class:     org_igrok_net_engine_IGNEngine
+ * Method:    measureString
+ * Signature: (JLjava/lang/String;)I
+ */
+JNIEXPORT jint JNICALL Java_org_igrok_1net_engine_IGNEngine_measureString
+  (JNIEnv *, jclass, jlong, jstring);
+
 #ifdef __cplusplus
 }
 #endif
