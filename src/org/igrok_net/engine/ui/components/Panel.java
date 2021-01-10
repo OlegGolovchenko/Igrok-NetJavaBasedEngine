@@ -50,4 +50,18 @@ public class Panel extends AbstractContainerComponent {
                 this.border.getBlue(), this.border.getAlpha());
     }
     
+    /**
+     * Sets background color for panel
+     * @param background new background color
+     */
+    public void setBackground(IGNColor background){
+        this.background = background;
+    }
+
+    /**
+     * resets background color to default
+     */
+    public void resetBackground(){
+        this.background = IGNColor.GRAY_COLOR;
+    }
 }

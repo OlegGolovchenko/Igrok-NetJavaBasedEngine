@@ -3,6 +3,12 @@ package org.igrok_net.engine.ui.components;
 import org.igrok_net.engine.IGNColor;
 import org.igrok_net.engine.ui.events.KeyPress;
 
+/**
+ * Representation of Text box component
+ * 
+ * @version 0.0.1
+ * @author Oleg Golovchenko
+ */
 public class TextBox extends AbstractContainerComponent {
 
     private String text;
@@ -10,6 +16,13 @@ public class TextBox extends AbstractContainerComponent {
     private Label lblText;
     private Panel pnlBackground;
 
+    /**
+     * Creates Textbox with given parameters
+     * @param width width
+     * @param height heignt
+     * @param text initial text of textbox
+     * @param font font to use for drawing
+     */
     public TextBox(int width, int height, String text, long font) {
         super();
         this.text = text;
@@ -45,5 +58,16 @@ public class TextBox extends AbstractContainerComponent {
             text += args.getKeyChars();
         }
         lblText.setText(text);
+    }
+
+    @Override
+    public boolean isMouseInside(int mX, int mY) {
+        boolean result = super.isMouseInside(mX, mY);
+        if (result) {
+            this.pnlBackground.setBackground(IGNColor.WHITE_COLOR);
+        } else {
+            this.pnlBackground.resetBackground();
+        }
+        return result;
     }
 }

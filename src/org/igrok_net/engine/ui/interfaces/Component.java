@@ -66,6 +66,13 @@ public interface Component extends Disposable {
     void sendMouseMovedEvent(Object sender, MouseMoved args);
 
     /**
+     * Sends mouse presses event
+     * @param sender sender
+     * @param button button code
+     */
+    void sendMousePressEvent(Object sender, long button);
+
+    /**
      * Checks if mouse is inside
      * @param mX mouse pointer x
      * @param mY mouse pointer y

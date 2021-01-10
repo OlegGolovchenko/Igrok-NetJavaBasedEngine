@@ -99,4 +99,9 @@ public abstract class AbstractComponent implements Component {
         this.mouseY = args.getY();
         this.onMouseMoved(sender, args);
     }
+
+    @Override
+    public void sendMousePressEvent(Object sender, long button){
+        this.onMousePress(sender, button);
+    }
 }

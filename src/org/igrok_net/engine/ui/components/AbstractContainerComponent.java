@@ -8,15 +8,31 @@ import org.igrok_net.engine.ui.events.MouseMoved;
 import org.igrok_net.engine.ui.interfaces.Component;
 import org.igrok_net.engine.ui.interfaces.ComponentContainer;
 
+/**
+ * Base class for container component
+ * 
+ * @version 0.0.1
+ * @author Oleg Golovchenko
+ */
 public abstract class AbstractContainerComponent extends AbstractComponent implements ComponentContainer {
 
     protected List<Component> components;
 
+    /**
+     * Default constructor for abstract container component
+     */
     public AbstractContainerComponent() {
         super();
         this.components = new ArrayList<Component>();
     }
 
+    /**
+     * Creates abstract container component with given params
+     * @param x top-left x
+     * @param y top-left y
+     * @param width width
+     * @param height height
+     */
     public AbstractContainerComponent(int x, int y, int width, int height) {
         super(x, y, width, height);
         this.components = new ArrayList<Component>();
@@ -77,6 +93,16 @@ public abstract class AbstractContainerComponent extends AbstractComponent imple
         for (Component component : this.components) {
             if (component.isMouseInside(this.mouseX - this.x, this.mouseY - this.y)) {
                 component.sendMouseMovedEvent(sender, args);
+            }
+        }
+    }
+
+    @Override
+    public void sendMousePressEvent(Object sender, long button) {
+        super.sendMousePressEvent(sender, button);
+        for (Component component : this.components) {
+            if (component.isMouseInside(this.mouseX - this.x, this.mouseY - this.y)) {
+                component.sendMousePressEvent(sender, button);
             }
         }
     }

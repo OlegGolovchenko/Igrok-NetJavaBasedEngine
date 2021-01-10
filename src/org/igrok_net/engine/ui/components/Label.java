@@ -21,6 +21,7 @@ public class Label extends AbstractComponent {
      * Creates label with Black text at position 10,20
      * 
      * @param text text to print
+     * @param font font tu use for printing
      */
     public Label(String text, long font) {
         this(10, 20, text, font);
@@ -32,6 +33,7 @@ public class Label extends AbstractComponent {
      * @param x    x of top-left corner
      * @param y    y of top-left corner
      * @param text text to print
+     * @param font font tu use for printing
      */
     public Label(int x, int y, String text, long font) {
         this(x, y, text, font, IGNColor.BLACK_COLOR);
@@ -43,6 +45,7 @@ public class Label extends AbstractComponent {
      * @param x     x of top-left corner
      * @param y     y of top-left corner
      * @param text  text to print
+     * @param font font tu use for printing
      * @param color color of text to print
      */
     public Label(int x, int y, String text, long font, IGNColor color) {

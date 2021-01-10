@@ -47,6 +47,7 @@ public class KeyPress {
      * 
      * @param key key code
      * @param mod key modifier
+     * @param keyChar key character
      * @return keycode object with given parameters
      */
     public static KeyPress create(long key, long mod, String keyChar) {
