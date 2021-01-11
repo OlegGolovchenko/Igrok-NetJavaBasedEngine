@@ -34,6 +34,7 @@ JNIEXPORT void JNICALL Java_org_igrok_1net_engine_ui_IGNWindow_mainLoop(JNIEnv *
     jmethodID onKeyPress = env->GetMethodID(jcl, "setKeyPress", "(JJLjava/lang/String;)V");
     jmethodID onKeyRelease = env->GetMethodID(jcl, "setKeyRelease","(JJLjava/lang/String;)V");
     jmethodID onMousePress = env->GetMethodID(jcl, "setMousePress","(J)V");
+    jmethodID onMouseRelease = env->GetMethodID(jcl, "setMouseRelease","(J)V");
     jmethodID onMouseMoved = env->GetMethodID(jcl, "setMouseMoved","(II)V");
     jmethodID isUpdateNeeded = env->GetMethodID(jcl, "isUpdateNeeded","()I");
     jmethodID renderUiFunc = env->GetMethodID(jcl,"renderUIElements","()V");
@@ -87,6 +88,10 @@ JNIEXPORT void JNICALL Java_org_igrok_1net_engine_ui_IGNWindow_mainLoop(JNIEnv *
                 {
                     env->CallVoidMethod(jobj, onMousePress, xev.xbutton.button);
                 }
+                if (xev.type == ButtonRelease)
+                {
+                    env->CallVoidMethod(jobj, onMouseRelease, xev.xbutton.button);
+                }
                 if (xev.type == MotionNotify)
                 {
                     env->CallVoidMethod(jobj, onMouseMoved, xev.xmotion.x, xev.xmotion.y);
@@ -133,6 +138,7 @@ int IGNWindow::IsSelectedEvent(Display *display, XEvent *event, XPointer args)
            event->type == KeyPress ||
            event->type == KeyRelease ||
            event->type == ButtonPress ||
+           event->type == ButtonRelease ||
            event->type == MotionNotify ||
            event->type == ClientMessage;
 }

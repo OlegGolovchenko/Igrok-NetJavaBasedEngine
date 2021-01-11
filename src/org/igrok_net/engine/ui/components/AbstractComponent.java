@@ -18,6 +18,9 @@ public abstract class AbstractComponent implements Component {
     protected void onMousePress(Object sender, long button) {
     }
 
+    protected void onMouseRelease(Object sender, long button) {
+    }
+    
     protected void onKeyPress(Object sender, KeyPress eventArgs) {
     }
 
@@ -103,5 +106,15 @@ public abstract class AbstractComponent implements Component {
     @Override
     public void sendMousePressEvent(Object sender, long button){
         this.onMousePress(sender, button);
+    }
+    
+    @Override
+    public void sendMouseReleaseEvent(Object sender, long button){
+        this.onMouseRelease(sender, button);
+    }
+
+    @Override
+    public boolean isFocuseable() {
+        return false;
     }
 }

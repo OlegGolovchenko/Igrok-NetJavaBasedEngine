@@ -11,7 +11,7 @@ import org.igrok_net.engine.ui.interfaces.Component;
  * @author Oleg Golovchenko
  * @version 0.0.1
  */
-public class Panel extends AbstractContainerComponent {
+public class Panel extends AbstractFocusableContainerComponent {
 
     /**
      * Creates default instance of panel

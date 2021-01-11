@@ -9,7 +9,7 @@ import org.igrok_net.engine.ui.events.KeyPress;
  * @version 0.0.1
  * @author Oleg Golovchenko
  */
-public class TextBox extends AbstractContainerComponent {
+public class TextBox extends AbstractFocusableContainerComponent {
 
     private String text;
     private long font;
@@ -61,13 +61,22 @@ public class TextBox extends AbstractContainerComponent {
     }
 
     @Override
+    public void focus() {
+        System.out.println("focus recieved");
+        super.focus();
+        this.pnlBackground.setBackground(IGNColor.WHITE_COLOR);
+    }
+
+    @Override
+    public void unFocus() {
+        System.out.println("focus lost");
+        super.unFocus();
+        this.pnlBackground.resetBackground();
+    }
+
+    @Override
     public boolean isMouseInside(int mX, int mY) {
         boolean result = super.isMouseInside(mX, mY);
-        if (result) {
-            this.pnlBackground.setBackground(IGNColor.WHITE_COLOR);
-        } else {
-            this.pnlBackground.resetBackground();
-        }
         return result;
     }
 }

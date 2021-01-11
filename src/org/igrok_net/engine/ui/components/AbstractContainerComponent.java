@@ -107,6 +107,16 @@ public abstract class AbstractContainerComponent extends AbstractComponent imple
         }
     }
 
+    @Override
+    public void sendMouseReleaseEvent(Object sender, long button) {
+        super.sendMouseReleaseEvent(sender, button);
+        for (Component component : this.components) {
+            if (component.isMouseInside(this.mouseX - this.x, this.mouseY - this.y)) {
+                component.sendMouseReleaseEvent(sender, button);
+            }
+        }
+    }
+
     /*
      * (non-Javadoc) @see org.igrok_net.engine.ui.interfaces.Disposable#dispose()
      */
