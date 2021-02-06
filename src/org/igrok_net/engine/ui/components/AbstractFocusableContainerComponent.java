@@ -14,9 +14,8 @@ public class AbstractFocusableContainerComponent extends AbstractContainerCompon
 
     @Override
     public void focus() {
-        System.out.println("container focus recieved");
         for (Component component : this.components) {
-            if (component.isMouseInside(this.mouseX, this.mouseY)) {
+            if (component.isMouseInside(this.mouseX, this.mouseY, this.x + this.parentX, this.y + this.parentY)) {
                 if (component.isFocuseable()) {
                     ((Focusable) component).focus();
                 }
@@ -30,9 +29,8 @@ public class AbstractFocusableContainerComponent extends AbstractContainerCompon
 
     @Override
     public void unFocus() {
-        System.out.println("container focus lost");
         for (Component component : this.components) {
-            if (component.isMouseInside(this.mouseX, this.mouseY)) {
+            if (component.isMouseInside(this.mouseX, this.mouseY, this.x + this.parentX, this.y + this.parentY)) {
                 if (component.isFocuseable()) {
                     ((Focusable) component).unFocus();
                 }

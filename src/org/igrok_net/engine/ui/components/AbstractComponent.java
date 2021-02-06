@@ -12,7 +12,7 @@ import org.igrok_net.engine.ui.interfaces.Component;
  * @version 0.0.1
  */
 public abstract class AbstractComponent implements Component {
-    protected int x, y, width, height, mouseX, mouseY;
+    protected int x, y, width, height, mouseX, mouseY, parentX, parentY;
     protected IGNColor background, border;
 
     protected void onMousePress(Object sender, long button) {
@@ -76,9 +76,11 @@ public abstract class AbstractComponent implements Component {
     }
 
     @Override
-    public boolean isMouseInside(int mX, int mY) {
-        if (this.x < mX && (this.x + this.width > mX)) {
-            if (this.y < mY && (this.y + this.height > mY)) {
+    public boolean isMouseInside(int mX, int mY, int pX, int pY) {
+        this.parentX = pX;
+        this.parentY = pY;
+        if (this.x + pX < mX && (this.x + pX + this.width > mX)) {
+            if (this.y + pY < mY && (this.y + pY + this.height > mY)) {
                 return true;
             }
             return false;

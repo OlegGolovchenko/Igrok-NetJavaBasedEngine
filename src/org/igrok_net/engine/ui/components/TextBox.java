@@ -62,21 +62,19 @@ public class TextBox extends AbstractFocusableContainerComponent {
 
     @Override
     public void focus() {
-        System.out.println("focus recieved");
         super.focus();
         this.pnlBackground.setBackground(IGNColor.WHITE_COLOR);
     }
 
     @Override
     public void unFocus() {
-        System.out.println("focus lost");
         super.unFocus();
         this.pnlBackground.resetBackground();
     }
 
     @Override
-    public boolean isMouseInside(int mX, int mY) {
-        boolean result = super.isMouseInside(mX, mY);
+    public boolean isMouseInside(int mX, int mY, int pX, int pY) {
+        boolean result = super.isMouseInside(mX, mY, pX, pY);
         return result;
     }
 }

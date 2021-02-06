@@ -83,9 +83,11 @@ public interface Component extends Disposable {
      * Checks if mouse is inside
      * @param mX mouse pointer x
      * @param mY mouse pointer y
+     * @param pX parent x
+     * @param pY parent y
      * @return true if inside false otherwise
      */
-    boolean isMouseInside(int mX, int mY);
+    boolean isMouseInside(int mX, int mY, int pX, int pY);
 
     /**
      * Checks if component is focusable (cfr. TextBox)

@@ -71,7 +71,7 @@ public abstract class AbstractContainerComponent extends AbstractComponent imple
     public void sendKeyEvent(Object sender, KeyPress args) {
         super.sendKeyEvent(sender, args);
         for (Component component : this.components) {
-            if (component.isMouseInside(this.mouseX - this.x, this.mouseY - this.y)) {
+            if (component.isMouseInside(this.mouseX, this.mouseY, this.x + this.parentX, this.y + this.parentY)) {
                 component.sendKeyEvent(sender, args);
             }
         }
@@ -81,7 +81,7 @@ public abstract class AbstractContainerComponent extends AbstractComponent imple
     public void sendKeyReleaseEvent(Object sender, KeyPress args) {
         super.sendKeyReleaseEvent(sender, args);
         for (Component component : this.components) {
-            if (component.isMouseInside(this.mouseX - this.x, this.mouseY - this.y)) {
+            if (component.isMouseInside(this.mouseX, this.mouseY, this.x + this.parentX, this.y + this.parentY)) {
                 component.sendKeyReleaseEvent(sender, args);
             }
         }
@@ -91,7 +91,7 @@ public abstract class AbstractContainerComponent extends AbstractComponent imple
     public void sendMouseMovedEvent(Object sender, MouseMoved args) {
         super.sendMouseMovedEvent(sender, args);
         for (Component component : this.components) {
-            if (component.isMouseInside(this.mouseX - this.x, this.mouseY - this.y)) {
+            if (component.isMouseInside(this.mouseX, this.mouseY, this.x + this.parentX, this.y + this.parentY)) {
                 component.sendMouseMovedEvent(sender, args);
             }
         }
@@ -101,7 +101,7 @@ public abstract class AbstractContainerComponent extends AbstractComponent imple
     public void sendMousePressEvent(Object sender, long button) {
         super.sendMousePressEvent(sender, button);
         for (Component component : this.components) {
-            if (component.isMouseInside(this.mouseX - this.x, this.mouseY - this.y)) {
+            if (component.isMouseInside(this.mouseX, this.mouseY, this.x + this.parentX, this.y + this.parentY)) {
                 component.sendMousePressEvent(sender, button);
             }
         }
@@ -111,7 +111,7 @@ public abstract class AbstractContainerComponent extends AbstractComponent imple
     public void sendMouseReleaseEvent(Object sender, long button) {
         super.sendMouseReleaseEvent(sender, button);
         for (Component component : this.components) {
-            if (component.isMouseInside(this.mouseX - this.x, this.mouseY - this.y)) {
+            if (component.isMouseInside(this.mouseX, this.mouseY, this.x + this.parentX, this.y + this.parentY)) {
                 component.sendMouseReleaseEvent(sender, button);
             }
         }

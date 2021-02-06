@@ -30,6 +30,10 @@ public class MouseMoved {
         return this.y;
     }
 
+    protected MouseMoved offsetForChild(int x,int y){
+        return new MouseMoved(this.x - x, this.y - y);
+    }
+
 
     /**
      * Creates mouse moved event args with given position

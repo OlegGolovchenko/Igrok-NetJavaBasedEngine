@@ -103,7 +103,7 @@ public class IGNWindow implements Disposable, ComponentContainer {
 
     protected void onMousePress(IGNWindow sender, long button) {
         for (Component component : this.components) {
-            if (component.isMouseInside(this.mouseX, this.mouseY)) {
+            if (component.isMouseInside(this.mouseX, this.mouseY, this.x, this.y)) {
                 component.sendMousePressEvent(sender, button);
             }
         }
@@ -111,7 +111,7 @@ public class IGNWindow implements Disposable, ComponentContainer {
 
     protected void onMouseRelease(IGNWindow sender, long button) {
         for (Component component : this.components) {
-            if (component.isMouseInside(this.mouseX, this.mouseY)) {
+            if (component.isMouseInside(this.mouseX, this.mouseY, this.x, this.y)) {
                 component.sendMouseReleaseEvent(sender, button);
             }
         }
@@ -119,7 +119,7 @@ public class IGNWindow implements Disposable, ComponentContainer {
 
     protected void onKeyPress(Object sender, KeyPress eventArgs) {
         for (Component component : this.components) {
-            if (component.isMouseInside(this.mouseX, this.mouseY)) {
+            if (component.isMouseInside(this.mouseX, this.mouseY, this.x, this.y)) {
                 component.sendKeyEvent(sender, eventArgs);
             }
         }
@@ -127,7 +127,7 @@ public class IGNWindow implements Disposable, ComponentContainer {
 
     protected void onKeyRelease(Object sender, KeyPress eventArgs) {
         for (Component component : this.components) {
-            if (component.isMouseInside(this.mouseX, this.mouseY)) {
+            if (component.isMouseInside(this.mouseX, this.mouseY, this.x, this.y)) {
                 component.sendKeyReleaseEvent(sender, eventArgs);
             }
         }
@@ -137,7 +137,7 @@ public class IGNWindow implements Disposable, ComponentContainer {
         this.mouseX = eventArgs.getX();
         this.mouseY = eventArgs.getY();
         for (Component component : this.components) {
-            if (component.isMouseInside(this.mouseX, this.mouseY)) {
+            if (component.isMouseInside(this.mouseX, this.mouseY, this.x, this.y)) {
                 component.sendMouseMovedEvent(sender, eventArgs);
                 if (component.isFocuseable()) {
                     ((Focusable) component).focus();
