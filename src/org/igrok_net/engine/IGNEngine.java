@@ -13,17 +13,6 @@ public class IGNEngine {
         File nativeLib = new File("lib/libIGNEngine.so");
         System.load(nativeLib.getAbsolutePath());
     }
-
-    public static native long  GLUT_STROKE_ROMAN();
-    public static native long  GLUT_STROKE_MONO_ROMAN();
-    public static native long  GLUT_BITMAP_9_BY_15();
-    public static native long  GLUT_BITMAP_8_BY_13();
-    public static native long  GLUT_BITMAP_TIMES_ROMAN_10();
-    public static native long  GLUT_BITMAP_TIMES_ROMAN_24();
-    public static native long  GLUT_BITMAP_HELVETICA_10();
-    public static native long  GLUT_BITMAP_HELVETICA_12();
-    public static native long  GLUT_BITMAP_HELVETICA_18();
-
     /**
      * GLUT font Stroke roman
      * @return pointer to font
