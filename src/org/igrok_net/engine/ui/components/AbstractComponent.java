@@ -87,7 +87,6 @@ public abstract class AbstractComponent implements Component {
         }
         return false;
     }
-
     @Override
     public void sendKeyEvent(Object sender, KeyPress args) {
         this.onKeyPress(sender, args);
@@ -97,7 +96,6 @@ public abstract class AbstractComponent implements Component {
     public void sendKeyReleaseEvent(Object sender, KeyPress args) {
         this.onKeyRelease(sender, args);
     }
-
     @Override
     public void sendMouseMovedEvent(Object sender, MouseMoved args) {
         this.mouseX = args.getX();

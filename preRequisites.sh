@@ -10,3 +10,4 @@ wget -qO - https://adoptopenjdk.jfrog.io/adoptopenjdk/api/gpg/key/public | apt-k
 echo "deb https://adoptopenjdk.jfrog.io/adoptopenjdk/deb "$1" main" | tee /etc/apt/sources.list.d/adoptopenjdk.list
 apt-get update
 apt-get install adoptopenjdk-15-hotspot adoptopenjdk-15-hotspot-jre -y
+

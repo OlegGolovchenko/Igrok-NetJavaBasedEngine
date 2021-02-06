@@ -45,7 +45,7 @@ public class Label extends AbstractComponent {
      * @param x     x of top-left corner
      * @param y     y of top-left corner
      * @param text  text to print
-     * @param font font tu use for printing
+     * @param font font to use for printing
      * @param color color of text to print
      */
     public Label(int x, int y, String text, long font, IGNColor color) {
