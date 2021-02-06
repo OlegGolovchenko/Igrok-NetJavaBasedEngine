@@ -8,15 +8,31 @@ import org.igrok_net.engine.ui.events.MouseMoved;
 import org.igrok_net.engine.ui.interfaces.Component;
 import org.igrok_net.engine.ui.interfaces.ComponentContainer;
 
+/**
+ * Base class for container component
+ * 
+ * @version 0.0.1
+ * @author Oleg Golovchenko
+ */
 public abstract class AbstractContainerComponent extends AbstractComponent implements ComponentContainer {
 
     protected List<Component> components;
 
+    /**
+     * Default constructor for abstract container component
+     */
     public AbstractContainerComponent() {
         super();
         this.components = new ArrayList<Component>();
     }
 
+    /**
+     * Creates abstract container component with given params
+     * @param x top-left x
+     * @param y top-left y
+     * @param width width
+     * @param height height
+     */
     public AbstractContainerComponent(int x, int y, int width, int height) {
         super(x, y, width, height);
         this.components = new ArrayList<Component>();
@@ -50,12 +66,12 @@ public abstract class AbstractContainerComponent extends AbstractComponent imple
     public void removeAll() {
         this.components.clear();
     }
-    
+
     @Override
     public void sendKeyEvent(Object sender, KeyPress args) {
-        super.sendKeyEvent(sender, args);    
-        for(Component component:this.components){
-            if(component.isMouseInside(this.mouseX, this.mouseY)){
+        super.sendKeyEvent(sender, args);
+        for (Component component : this.components) {
+            if (component.isMouseInside(this.mouseX, this.mouseY, this.x + this.parentX, this.y + this.parentY)) {
                 component.sendKeyEvent(sender, args);
             }
         }
@@ -64,8 +80,8 @@ public abstract class AbstractContainerComponent extends AbstractComponent imple
     @Override
     public void sendKeyReleaseEvent(Object sender, KeyPress args) {
         super.sendKeyReleaseEvent(sender, args);
-        for(Component component:this.components){
-            if(component.isMouseInside(this.mouseX, this.mouseY)){
+        for (Component component : this.components) {
+            if (component.isMouseInside(this.mouseX, this.mouseY, this.x + this.parentX, this.y + this.parentY)) {
                 component.sendKeyReleaseEvent(sender, args);
             }
         }
@@ -74,9 +90,29 @@ public abstract class AbstractContainerComponent extends AbstractComponent imple
     @Override
     public void sendMouseMovedEvent(Object sender, MouseMoved args) {
         super.sendMouseMovedEvent(sender, args);
-        for(Component component:this.components){
-            if(component.isMouseInside(this.mouseX, this.mouseY)){
+        for (Component component : this.components) {
+            if (component.isMouseInside(this.mouseX, this.mouseY, this.x + this.parentX, this.y + this.parentY)) {
                 component.sendMouseMovedEvent(sender, args);
+            }
+        }
+    }
+
+    @Override
+    public void sendMousePressEvent(Object sender, long button) {
+        super.sendMousePressEvent(sender, button);
+        for (Component component : this.components) {
+            if (component.isMouseInside(this.mouseX, this.mouseY, this.x + this.parentX, this.y + this.parentY)) {
+                component.sendMousePressEvent(sender, button);
+            }
+        }
+    }
+
+    @Override
+    public void sendMouseReleaseEvent(Object sender, long button) {
+        super.sendMouseReleaseEvent(sender, button);
+        for (Component component : this.components) {
+            if (component.isMouseInside(this.mouseX, this.mouseY, this.x + this.parentX, this.y + this.parentY)) {
+                component.sendMouseReleaseEvent(sender, button);
             }
         }
     }
@@ -87,7 +123,7 @@ public abstract class AbstractContainerComponent extends AbstractComponent imple
     @Override
     public void dispose() {
         super.dispose();
-        for(Component component: this.components){
+        for (Component component : this.components) {
             component.dispose();
         }
         this.removeAll();

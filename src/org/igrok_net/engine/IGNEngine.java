@@ -13,15 +13,50 @@ public class IGNEngine {
         File nativeLib = new File("lib/libIGNEngine.so");
         System.load(nativeLib.getAbsolutePath());
     }
-
+    /**
+     * GLUT font Stroke roman
+     * @return pointer to font
+     */
     public static native long  GLUT_STROKE_ROMAN();
+    /**
+     * GLUT font Stroke mono roman
+     * @return pointer to font
+     */
     public static native long  GLUT_STROKE_MONO_ROMAN();
+    /**
+     * GLUT font 9/15
+     * @return pointer to font
+     */
     public static native long  GLUT_BITMAP_9_BY_15();
+    /**
+     * GLUT font 8/13
+     * @return pointer to font
+     */
     public static native long  GLUT_BITMAP_8_BY_13();
+    /**
+     * GLUT font times new roman 10
+     * @return pointer to font
+     */
     public static native long  GLUT_BITMAP_TIMES_ROMAN_10();
+    /**
+     * GLUT font times new roman 24
+     * @return pointer to font
+     */
     public static native long  GLUT_BITMAP_TIMES_ROMAN_24();
+    /**
+     * GLUT font helvetica 10
+     * @return pointer to font
+     */
     public static native long  GLUT_BITMAP_HELVETICA_10();
+    /**
+     * GLUT font helvetica 12
+     * @return pointer to font
+     */
     public static native long  GLUT_BITMAP_HELVETICA_12();
+    /**
+     * GLUT font helvetica 18
+     * @return pointer to font
+     */
     public static native long  GLUT_BITMAP_HELVETICA_18();
 
     /**
@@ -81,4 +116,12 @@ public class IGNEngine {
         float borderBlue,
         float borderAlpha
     );
+
+    /**
+     * Measures rendered String
+     * @param font font used to render
+     * @param text string that is rendered
+     * @return length of string
+     */
+    public static native int measureString(long font, String text);
 }

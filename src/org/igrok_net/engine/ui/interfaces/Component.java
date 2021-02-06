@@ -66,10 +66,32 @@ public interface Component extends Disposable {
     void sendMouseMovedEvent(Object sender, MouseMoved args);
 
     /**
+     * Sends mouse presses event
+     * @param sender sender
+     * @param button button code
+     */
+    void sendMousePressEvent(Object sender, long button);
+
+    /**
+     * Sends mouse presses event
+     * @param sender sender
+     * @param button button code
+     */
+    void sendMouseReleaseEvent(Object sender, long button);
+
+    /**
      * Checks if mouse is inside
-     * @param x mouse pointer x
-     * @param y mouse pointer y
+     * @param mX mouse pointer x
+     * @param mY mouse pointer y
+     * @param pX parent x
+     * @param pY parent y
      * @return true if inside false otherwise
      */
-    boolean isMouseInside(int x, int y);
+    boolean isMouseInside(int mX, int mY, int pX, int pY);
+
+    /**
+     * Checks if component is focusable (cfr. TextBox)
+     * @return true if focusable, false otherwise
+     */
+    boolean isFocuseable();
 }

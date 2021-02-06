@@ -7,16 +7,20 @@ import org.igrok_net.engine.ui.interfaces.Component;
 
 /**
  * Represents base class for any ui component
+ * 
  * @author Oleg Golovchenko
  * @version 0.0.1
  */
 public abstract class AbstractComponent implements Component {
-    protected int x, y, width, height, mouseX, mouseY;
+    protected int x, y, width, height, mouseX, mouseY, parentX, parentY;
     protected IGNColor background, border;
 
     protected void onMousePress(Object sender, long button) {
     }
 
+    protected void onMouseRelease(Object sender, long button) {
+    }
+    
     protected void onKeyPress(Object sender, KeyPress eventArgs) {
     }
 
@@ -35,9 +39,10 @@ public abstract class AbstractComponent implements Component {
 
     /**
      * Initialises abstract component with given size and position
-     * @param x top-left x
-     * @param y top-left y
-     * @param width width
+     * 
+     * @param x      top-left x
+     * @param y      top-left y
+     * @param width  width
      * @param height height
      */
     public AbstractComponent(int x, int y, int width, int height) {
@@ -64,24 +69,24 @@ public abstract class AbstractComponent implements Component {
         this.height = height;
     }
 
-
     @Override
-    public void setColors(IGNColor background, IGNColor border){
+    public void setColors(IGNColor background, IGNColor border) {
         this.background = background;
         this.border = border;
     }
 
     @Override
-    public boolean isMouseInside(int x, int y) {
-        if(this.x < x && this.width > x){
-            if(this.y < y && this.height > y){
+    public boolean isMouseInside(int mX, int mY, int pX, int pY) {
+        this.parentX = pX;
+        this.parentY = pY;
+        if (this.x + pX < mX && (this.x + pX + this.width > mX)) {
+            if (this.y + pY < mY && (this.y + pY + this.height > mY)) {
                 return true;
             }
             return false;
         }
         return false;
     }
-    
     @Override
     public void sendKeyEvent(Object sender, KeyPress args) {
         this.onKeyPress(sender, args);
@@ -91,11 +96,25 @@ public abstract class AbstractComponent implements Component {
     public void sendKeyReleaseEvent(Object sender, KeyPress args) {
         this.onKeyRelease(sender, args);
     }
-    
     @Override
     public void sendMouseMovedEvent(Object sender, MouseMoved args) {
         this.mouseX = args.getX();
         this.mouseY = args.getY();
         this.onMouseMoved(sender, args);
+    }
+
+    @Override
+    public void sendMousePressEvent(Object sender, long button){
+        this.onMousePress(sender, button);
+    }
+    
+    @Override
+    public void sendMouseReleaseEvent(Object sender, long button){
+        this.onMouseRelease(sender, button);
+    }
+
+    @Override
+    public boolean isFocuseable() {
+        return false;
     }
 }

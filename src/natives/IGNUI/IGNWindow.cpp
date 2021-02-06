@@ -19,12 +19,22 @@ JNIEXPORT void JNICALL Java_org_igrok_1net_engine_ui_IGNWindow_destroyWindow(JNI
     }
 }
 
+JNIEXPORT void JNICALL Java_org_igrok_1net_engine_ui_IGNWindow_augmentFps(JNIEnv *env, jobject jobj, jlong wndPtr, jint fps)
+{
+    IGNWindow *window = (IGNWindow *)wndPtr;
+    if (window != NULL)
+    {
+        window->currentFps = fps;
+    }
+}
+
 JNIEXPORT void JNICALL Java_org_igrok_1net_engine_ui_IGNWindow_mainLoop(JNIEnv *env, jobject jobj, jlong wndPtr)
 {
     jclass jcl = env->GetObjectClass(jobj);
-    jmethodID onKeyPress = env->GetMethodID(jcl, "setKeyPress", "(JJ)V");
-    jmethodID onKeyRelease = env->GetMethodID(jcl, "setKeyRelease","(JJ)V");
+    jmethodID onKeyPress = env->GetMethodID(jcl, "setKeyPress", "(JJLjava/lang/String;)V");
+    jmethodID onKeyRelease = env->GetMethodID(jcl, "setKeyRelease","(JJLjava/lang/String;)V");
     jmethodID onMousePress = env->GetMethodID(jcl, "setMousePress","(J)V");
+    jmethodID onMouseRelease = env->GetMethodID(jcl, "setMouseRelease","(J)V");
     jmethodID onMouseMoved = env->GetMethodID(jcl, "setMouseMoved","(II)V");
     jmethodID isUpdateNeeded = env->GetMethodID(jcl, "isUpdateNeeded","()I");
     jmethodID renderUiFunc = env->GetMethodID(jcl,"renderUIElements","()V");
@@ -38,7 +48,7 @@ JNIEXPORT void JNICALL Java_org_igrok_1net_engine_ui_IGNWindow_mainLoop(JNIEnv *
         {
             jint result = env->CallIntMethod(jobj, isUpdateNeeded);
             XEvent xev;
-            if(XCheckIfEvent(window->display, &xev, IGNWindow::IsSelectedEvent, NULL))
+            if (XCheckIfEvent(window->display, &xev, IGNWindow::IsSelectedEvent, NULL))
             {
 
                 if (xev.type == Expose)
@@ -48,15 +58,39 @@ JNIEXPORT void JNICALL Java_org_igrok_1net_engine_ui_IGNWindow_mainLoop(JNIEnv *
                 }
                 if (xev.type == KeyPress)
                 {
-                    env->CallVoidMethod(jobj, onKeyPress, xev.xkey.keycode, xev.xkey.keycode);
+                    XIM xim = XOpenIM(window->display, 0, 0, 0);
+                    XIC xic = XCreateIC(xim, XNInputStyle, XIMPreeditNothing | XIMStatusNothing, NULL);
+                    char buffer[2];
+                    KeySym ignore;
+                    Status return_status;
+                    Xutf8LookupString(xic, &xev.xkey, buffer, sizeof(buffer), &ignore, &return_status);
+                    buffer[2] = 0;
+                    jstring charString = env->NewStringUTF(buffer);
+                    env->CallVoidMethod(jobj, onKeyPress, xev.xkey.keycode, xev.xkey.keycode, charString);
+                    XDestroyIC(xic);
+                    XCloseIM(xim);
                 }
                 if (xev.type == KeyRelease)
                 {
-                    env->CallVoidMethod(jobj, onKeyRelease, xev.xkey.keycode, xev.xkey.keycode);
+                    XIM xim = XOpenIM(window->display, 0, 0, 0);
+                    XIC xic = XCreateIC(xim, XNInputStyle, XIMPreeditNothing | XIMStatusNothing, NULL);
+                    char buffer[2];
+                    KeySym ignore;
+                    Status return_status;
+                    Xutf8LookupString(xic, &xev.xkey, buffer, sizeof(buffer), &ignore, &return_status);
+                    buffer[2] = 0;
+                    jstring charString = env->NewStringUTF(buffer);
+                    env->CallVoidMethod(jobj, onKeyRelease, xev.xkey.keycode, xev.xkey.keycode, charString);
+                    XDestroyIC(xic);
+                    XCloseIM(xim);
                 }
                 if (xev.type == ButtonPress)
                 {
                     env->CallVoidMethod(jobj, onMousePress, xev.xbutton.button);
+                }
+                if (xev.type == ButtonRelease)
+                {
+                    env->CallVoidMethod(jobj, onMouseRelease, xev.xbutton.button);
                 }
                 if (xev.type == MotionNotify)
                 {
@@ -74,6 +108,7 @@ JNIEXPORT void JNICALL Java_org_igrok_1net_engine_ui_IGNWindow_mainLoop(JNIEnv *
             glClearColor(1, 1, 1, 1);
             if (result)
             {
+                window->SetFps();
                 glViewport(0, 0, gwa.width, gwa.height);
                 glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
                 glMatrixMode(GL_PROJECTION);
@@ -103,6 +138,7 @@ int IGNWindow::IsSelectedEvent(Display *display, XEvent *event, XPointer args)
            event->type == KeyPress ||
            event->type == KeyRelease ||
            event->type == ButtonPress ||
+           event->type == ButtonRelease ||
            event->type == MotionNotify ||
            event->type == ClientMessage;
 }
@@ -141,11 +177,17 @@ IGNWindow::IGNWindow(const char *title, int x, int y, int width, int height)
         XSetWMProtocols(this->display, this->window, &vmDeleteMessage, GL_TRUE);
         this->running = true;
     }
+    this->currentFps = 0;
 }
 
 bool IGNWindow::IsRunning()
 {
     return this->running;
+}
+
+void IGNWindow::SetFps(){
+    std::string fpsString = std::to_string(this->currentFps);
+    fpsString += " fps";
 }
 
 IGNWindow::~IGNWindow()

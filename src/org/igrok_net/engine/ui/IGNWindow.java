@@ -7,13 +7,14 @@ import java.util.List;
 import org.igrok_net.engine.ui.interfaces.Component;
 import org.igrok_net.engine.ui.interfaces.ComponentContainer;
 import org.igrok_net.engine.ui.interfaces.Disposable;
+import org.igrok_net.engine.ui.interfaces.Focusable;
 import org.igrok_net.engine.IGNEngine;
 import org.igrok_net.engine.ui.components.Label;
 import org.igrok_net.engine.ui.events.*;
 
 /**
- * Main application window object.
- * You should only open one.
+ * Main application window object. You should only open one.
+ * 
  * @author Oleg Golovchenko
  * @version 0.0.1
  */
@@ -37,11 +38,15 @@ public class IGNWindow implements Disposable, ComponentContainer {
 
     private List<Component> components;
 
+    private Label lblFps;
+
     private native long createNativeWindow(String title, int x, int y, int width, int height);
 
     private native void destroyWindow(long wndPtr);
 
     private native void mainLoop(long wndPtr);
+
+    private native void augmentFps(long wndPtr, int fps);
 
     private int isUpdateNeeded() {
         var currentTime = System.currentTimeMillis();
@@ -55,6 +60,7 @@ public class IGNWindow implements Disposable, ComponentContainer {
         if (deltaInitial > 1000) {
             this.currentFps = frameCounter;
             this.frameCounter = 0;
+            augmentFps(wndPtr, this.currentFps);
             this.initialTime = currentTime;
         }
         return 0;
@@ -75,36 +81,53 @@ public class IGNWindow implements Disposable, ComponentContainer {
 
     }
 
-    private void setKeyPress(long key, long mod) {
-        onKeyPress(this, KeyPress.create(key, mod));
+    private void setKeyPress(long key, long mod, String keyChar) {
+        onKeyPress(this, KeyPress.create(key, mod, keyChar));
     }
 
-    private void setKeyRelease(long key, long mod) {
-        onKeyRelease(this, KeyPress.create(key, mod));
+    private void setKeyRelease(long key, long mod, String keyChar) {
+        onKeyRelease(this, KeyPress.create(key, mod, keyChar));
     }
 
     private void setMousePress(long button) {
         onMousePress(this, button);
     }
 
+    private void setMouseRelease(long button) {
+        onMouseRelease(this, button);
+    }
+
     private void setMouseMoved(int x, int y) {
         onMouseMoved(this, MouseMoved.create(x, y));
     }
 
-    protected void onMousePress(IGNWindow ignWindow, long button) {
+    protected void onMousePress(IGNWindow sender, long button) {
+        for (Component component : this.components) {
+            if (component.isMouseInside(this.mouseX, this.mouseY, this.x, this.y)) {
+                component.sendMousePressEvent(sender, button);
+            }
+        }
+    }
+
+    protected void onMouseRelease(IGNWindow sender, long button) {
+        for (Component component : this.components) {
+            if (component.isMouseInside(this.mouseX, this.mouseY, this.x, this.y)) {
+                component.sendMouseReleaseEvent(sender, button);
+            }
+        }
     }
 
     protected void onKeyPress(Object sender, KeyPress eventArgs) {
-        for(Component component:this.components){
-            if(component.isMouseInside(this.mouseX, this.mouseY)){
+        for (Component component : this.components) {
+            if (component.isMouseInside(this.mouseX, this.mouseY, this.x, this.y)) {
                 component.sendKeyEvent(sender, eventArgs);
             }
         }
     }
 
     protected void onKeyRelease(Object sender, KeyPress eventArgs) {
-        for(Component component:this.components){
-            if(component.isMouseInside(this.mouseX, this.mouseY)){
+        for (Component component : this.components) {
+            if (component.isMouseInside(this.mouseX, this.mouseY, this.x, this.y)) {
                 component.sendKeyReleaseEvent(sender, eventArgs);
             }
         }
@@ -113,9 +136,16 @@ public class IGNWindow implements Disposable, ComponentContainer {
     protected void onMouseMoved(Object sender, MouseMoved eventArgs) {
         this.mouseX = eventArgs.getX();
         this.mouseY = eventArgs.getY();
-        for(Component component:this.components){
-            if(component.isMouseInside(this.mouseX, this.mouseY)){
+        for (Component component : this.components) {
+            if (component.isMouseInside(this.mouseX, this.mouseY, this.x, this.y)) {
                 component.sendMouseMovedEvent(sender, eventArgs);
+                if (component.isFocuseable()) {
+                    ((Focusable) component).focus();
+                }
+            } else {
+                if (component.isFocuseable()) {
+                    ((Focusable) component).unFocus();
+                }
             }
         }
     }
@@ -129,6 +159,7 @@ public class IGNWindow implements Disposable, ComponentContainer {
 
     /**
      * Creates window with given title positioned on 0:0 and size of 800x600
+     * 
      * @param title title
      */
     public IGNWindow(String title) {
@@ -137,22 +168,26 @@ public class IGNWindow implements Disposable, ComponentContainer {
 
     /**
      * Creates window with given parameters and size of 800x600
+     * 
      * @param title title
-     * @param x top-left x
-     * @param y top-left y
+     * @param x     top-left x
+     * @param y     top-left y
      */
     public IGNWindow(String title, int x, int y) {
         this(title, x, y, 800, 600);
         this.components = new ArrayList<Component>();
-        this.addChild(new Label(10, 0, getFrameCounter() + " fps", IGNEngine.GLUT_BITMAP_9_BY_15()));
+        this.lblFps = new Label(10, 0, getFrameCounter() + " fps", IGNEngine.GLUT_BITMAP_9_BY_15());
+        this.lblFps.resize(100, 50);
+        this.addChild(lblFps);
     }
 
     /**
      * Creates window with given parameters
-     * @param title title
-     * @param x top-left x
-     * @param y top-left y
-     * @param width width
+     * 
+     * @param title  title
+     * @param x      top-left x
+     * @param y      top-left y
+     * @param width  width
      * @param height height
      */
     public IGNWindow(String title, int x, int y, int width, int height) {
@@ -187,24 +222,29 @@ public class IGNWindow implements Disposable, ComponentContainer {
     }
 
     /*
-    * (non-Javadoc) @see org.igrok_net.engine.ui.interfaces.ComponentContainer#addChild(org.igrok_net.engine.ui.interfaces.Component)
-    */
+     * (non-Javadoc) @see
+     * org.igrok_net.engine.ui.interfaces.ComponentContainer#addChild(org.igrok_net.
+     * engine.ui.interfaces.Component)
+     */
     @Override
     public void addChild(Component component) {
         this.components.add(component);
     }
 
     /*
-    * (non-Javadoc) @see org.igrok_net.engine.ui.interfaces.ComponentContainer#removeChild(org.igrok_net.engine.ui.interfaces.Component)
-    */
+     * (non-Javadoc) @see
+     * org.igrok_net.engine.ui.interfaces.ComponentContainer#removeChild(org.
+     * igrok_net.engine.ui.interfaces.Component)
+     */
     @Override
     public void removeChild(Component component) {
         this.components.add(component);
     }
 
     /*
-    * (non-Javadoc) @see org.igrok_net.engine.ui.interfaces.ComponentContainer#removeAll()
-    */
+     * (non-Javadoc) @see
+     * org.igrok_net.engine.ui.interfaces.ComponentContainer#removeAll()
+     */
     @Override
     public void removeAll() {
         this.components.clear();

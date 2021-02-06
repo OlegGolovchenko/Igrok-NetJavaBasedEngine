@@ -33,8 +33,43 @@ JNIEXPORT void JNICALL Java_org_igrok_1net_engine_IGNEngine_printString2D(JNIEnv
     env->ReleaseStringUTFChars(text, textChars);
 }
 
+JNIEXPORT jint JNICALL Java_org_igrok_1net_engine_IGNEngine_measureString(JNIEnv *env, jclass jcl, jlong font, jstring text)
+{
+    int result = 0;
+    const char *textChars = env->GetStringUTFChars(text, NULL);
+    const unsigned char *printeableTextChars = reinterpret_cast<const unsigned char *>(textChars);
+    result = glutBitmapLength((void *)font, printeableTextChars);
+    printeableTextChars = NULL;
+    env->ReleaseStringUTFChars(text, textChars);
+    return result;
+}
+
 JNIEXPORT void JNICALL Java_org_igrok_1net_engine_IGNEngine_RenderQuad(JNIEnv *env, jclass jcl, jint x, jint y, jint w, jint h, jfloat r, jfloat g, jfloat b, jfloat a, jfloat br, jfloat bg, jfloat bb, jfloat ba)
 {
+    glBegin(GL_LINES);
+    glColor4f(br, bg, bb, ba);
+    glVertex2i(x, y);
+    glColor4f(br, bg, bb, ba);
+    glVertex2i(x + w, y);
+    glEnd();
+    glBegin(GL_LINES);
+    glColor4f(br, bg, bb, ba);
+    glVertex2i(x + w, y);
+    glColor4f(br, bg, bb, ba);
+    glVertex2i(x + w, y + h);
+    glEnd();
+    glBegin(GL_LINES);
+    glColor4f(br, bg, bb, ba);
+    glVertex2i(x + w, y + h);
+    glColor4f(br, bg, bb, ba);
+    glVertex2i(x, y + h);
+    glEnd();
+    glBegin(GL_LINES);
+    glColor4f(br, bg, bb, ba);
+    glVertex2i(x, y + h);
+    glColor4f(br, bg, bb, ba);
+    glVertex2i(x, y);
+    glEnd();
     glBegin(GL_QUADS);
     glColor4f(r, g, b, a);
     glVertex2i(x, y);
@@ -44,26 +79,6 @@ JNIEXPORT void JNICALL Java_org_igrok_1net_engine_IGNEngine_RenderQuad(JNIEnv *e
     glVertex2i(x + w, y + h);
     glColor4f(r, g, b, a);
     glVertex2i(x, y + h);
-    glEnd();
-    glBegin(GL_LINES);
-    glColor4f(br, bg, bb, ba);
-    glVertex2i(x, y);
-    glVertex2i(x + w - 1, y);
-    glEnd();
-    glBegin(GL_LINES);
-    glColor4f(br, bg, bb, ba);
-    glVertex2i(x + w - 1, y);
-    glVertex2i(x + w - 1, y + h - 1);
-    glEnd();
-    glBegin(GL_LINES);
-    glColor4f(br, bg, bb, ba);
-    glVertex2i(x + w - 1, y + h - 1);
-    glVertex2i(x, y + h - 1);
-    glEnd();
-    glBegin(GL_LINES);
-    glColor4f(br, bg, bb, ba);
-    glVertex2i(x, y + h - 1);
-    glVertex2i(x, y);
     glEnd();
 }
 

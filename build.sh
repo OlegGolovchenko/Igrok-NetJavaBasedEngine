@@ -12,7 +12,7 @@ jar cfe org.igrok-net.launcher.jar org.igrok_net.launcher.Main -C ../bin org/igr
 cd ..
 echo "done."
 echo "compiling native library"
-rm ./obj/IGNUI.o
+rm -r ./obj/*
 gcc -I /usr/lib/jvm/adoptopenjdk-15-hotspot-amd64/include/ -I /usr/lib/jvm/adoptopenjdk-15-hotspot-amd64/include/linux/ -c -Wall -Werror -fpic -o ./obj/IGNUI.o ./src/natives/IGNUI/*.cpp
 gcc -I /usr/lib/jvm/adoptopenjdk-15-hotspot-amd64/include/ -I /usr/lib/jvm/adoptopenjdk-15-hotspot-amd64/include/linux/ -c -Wall -Werror -fpic -o ./obj/IGNEngine.o ./src/natives/*.cpp
 echo "done."

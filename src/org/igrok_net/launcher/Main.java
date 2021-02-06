@@ -4,6 +4,7 @@ import org.igrok_net.engine.IGNEngine;
 import org.igrok_net.engine.ui.IGNWindow;
 import org.igrok_net.engine.ui.components.Label;
 import org.igrok_net.engine.ui.components.Panel;
+import org.igrok_net.engine.ui.components.TextBox;
 
 /**
  * Main class of launcher
@@ -23,7 +24,11 @@ public class Main {
         IGNWindow window = new IGNWindow();
         Panel test = new Panel();
         Label testLbl = new Label(0, 0, "Test", IGNEngine.GLUT_BITMAP_9_BY_15());
+        TextBox tbTest = new TextBox(100, 20, "type here", IGNEngine.GLUT_BITMAP_9_BY_15());
+        tbTest.reposition(0, 50);
+        testLbl.resize(50, 50);
         test.addChild(testLbl);
+        test.addChild(tbTest);
         test.reposition(50, 50);
         test.resize(100, 100);
         window.addChild(test);
